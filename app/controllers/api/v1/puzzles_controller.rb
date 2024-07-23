@@ -42,6 +42,7 @@ module Api
 
       # GET api/v1/puzzles/:id
       def show
+        # Error raised via set_puzzle in case of no puzzle id match.
         render json: {
           status: { code: 200, message: 'Puzzle found' },
           data: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes]
@@ -72,7 +73,7 @@ module Api
       def destroy
         if @puzzle.destroy
           render json: {
-            message: 'Puzzle deletion successful',
+            status: { code: 200, message: 'Puzzle deletion successful' },
             data: { deleted_puzzle: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes] }
           }, status: :ok
         else
@@ -89,7 +90,7 @@ module Api
         @puzzle = Puzzle.find(params[:id])
       rescue ActiveRecord::RecordNotFound => e
         render json: {
-          message: e,
+          status: { code: 404, message: e },
           data: nil
         }, status: :not_found
       end

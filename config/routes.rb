@@ -7,7 +7,7 @@ Rails.application.routes.draw do
                sign_out: 'logout',
 
                # Registration path:
-               registration: 'signup'
+               registration: '/signup'
              },
              controllers: {
                sessions: 'users/sessions',

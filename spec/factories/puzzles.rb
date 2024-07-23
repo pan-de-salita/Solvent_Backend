@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :challenge do
+  factory :puzzle do
     trait :with_title do
       title { 'Test Challenge' }
     end

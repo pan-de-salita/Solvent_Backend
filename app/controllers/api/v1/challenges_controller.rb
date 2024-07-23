@@ -22,7 +22,9 @@ module Api
                  status: :unprocessable_entity
         end
       rescue ActionController::ParameterMissing => e
-        render json: { message: e }, status: :bad_request
+        render json: { message: e, data: nil }, status: :bad_request
+      rescue ActionDispatch::Http::Parameters::ParseError => e
+        render json: { message: e, data: nil }, status: :bad_request
       end
 
       # GET api/v1/challenges/:id
@@ -39,13 +41,14 @@ module Api
                  status: :unprocessable_entity
         end
       rescue ActionController::ParameterMissing => e
-        render json: { message: e }, status: :bad_request
+        render json: { message: e, data: nil }, status: :bad_request
       end
 
       # DELETE api/v1/challenges/:id
       def destroy
         if @challenge.destroy
-          render json: { message: 'Challenge deletion successful', data: @challenge }, status: :ok
+          render json: { message: 'Challenge deletion successful', data: { deleted_challange: @challenge } },
+                 status: :ok
         else
           render json: { message: 'Challenge deletion unsuccessful', data: @challenge.errors.full_messages },
                  status: :unprocessable_entity

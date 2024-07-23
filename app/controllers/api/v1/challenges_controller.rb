@@ -47,7 +47,7 @@ module Api
       # DELETE api/v1/challenges/:id
       def destroy
         if @challenge.destroy
-          render json: { message: 'Challenge deletion successful', data: { deleted_challange: @challenge } },
+          render json: { message: 'Challenge deletion successful', data: { deleted_challenge: @challenge } },
                  status: :ok
         else
           render json: { message: 'Challenge deletion unsuccessful', data: @challenge.errors.full_messages },

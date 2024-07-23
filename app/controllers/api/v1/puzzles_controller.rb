@@ -77,7 +77,7 @@ module Api
           }, status: :ok
         else
           render json: {
-            message: 'Puzzle deletion unsuccessful',
+            status: { code: 422, message: 'Puzzle deletion unsuccessful' },
             data: @puzzle.errors.full_messages
           }, status: :unprocessable_entity
         end

@@ -31,7 +31,7 @@ module Api
           render json: {
             status: {
               code: 422,
-              message: "Puzzle couldn't be created successfully. #{puzzle.errors.full_messages}"
+              message: "Puzzle couldn't be created successfully. #{puzzle.errors.full_messages.to_sentence}."
             }
           }, status: :unprocessable_entity
         end
@@ -61,7 +61,7 @@ module Api
           render json: {
             status: {
               code: 422,
-              message: "Puzzle couldn't be updated successfully. #{@puzzle.errors.full_messages}"
+              message: "Puzzle couldn't be updated successfully. #{@puzzle.errors.full_messages.to_sentence}."
             }
           }, status: :unprocessable_entity
         end
@@ -82,7 +82,7 @@ module Api
           render json: {
             status: {
               code: 422,
-              message: "Puzzle couldn't be deleted successfully. #{@puzzle.errors.full_messages.to_sentence}"
+              message: "Puzzle couldn't be deleted successfully. #{@puzzle.errors.full_messages.to_sentence}."
             }
           }, status: :unprocessable_entity
         end

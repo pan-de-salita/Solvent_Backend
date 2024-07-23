@@ -5,12 +5,12 @@ module Api
     class PuzzlesController < ApplicationController
       before_action :set_puzzle, except: %i[index create]
 
-      # POST api/v1/puzzles
+      # GET api/v1/puzzles
       def index
         puzzles = Puzzle.all
 
         render json: {
-          status: { code: 200, message: 'Retrieved all puzzles' },
+          status: { code: 200, message: 'Got all puzzles successfully.' },
           data: {
             puzzle_count: puzzles.count,
             puzzles: PuzzleSerializer.new(puzzles).serializable_hash[:data].map { |data| data[:attributes] }
@@ -24,27 +24,28 @@ module Api
 
         if puzzle.save
           render json: {
-            status: { code: 201, message: 'Puzzle creation successful' },
+            status: { code: 201, message: 'Created puzzle successfully.' },
             data: PuzzleSerializer.new(puzzle).serializable_hash[:data][:attributes]
           }, status: :created
         else
           render json: {
-            status: { code: 422, message: 'Puzzle creation unsuccessful' },
-            data: puzzle.errors.full_messages
+            status: {
+              code: 422,
+              message: "Puzzle couldn't be created successfully. #{puzzle.errors.full_messages}"
+            }
           }, status: :unprocessable_entity
         end
       rescue StandardError => e
         render json: {
-          status: { status: 400, message: e },
-          data: nil
+          status: { status: 400, message: e }
         }, status: :bad_request
       end
 
       # GET api/v1/puzzles/:id
       def show
-        # Error raised via set_puzzle in case of no puzzle id match.
+        # Error raised via set_puzzle in case of no id match.
         render json: {
-          status: { code: 200, message: 'Puzzle found' },
+          status: { code: 200, message: 'Got puzzle successfully.' },
           data: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes]
         }, status: :ok
       end
@@ -53,19 +54,20 @@ module Api
       def update
         if @puzzle.update(puzzle_params)
           render json: {
-            status: { code: 200, message: 'Puzzle update successful' },
+            status: { code: 200, message: 'Updated puzzle successfully.' },
             data: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes]
           }, status: :ok
         else
           render json: {
-            status: { code: 422, message: 'Puzzle update unsuccessful' },
-            data: @puzzle.errors.full_messages
+            status: {
+              code: 422,
+              message: "Puzzle couldn't be updated successfully. #{@puzzle.errors.full_messages}"
+            }
           }, status: :unprocessable_entity
         end
       rescue StandardError => e
         render json: {
-          status: { status: 400, message: e },
-          data: nil
+          status: { status: 400, message: e }
         }, status: :bad_request
       end
 
@@ -73,13 +75,15 @@ module Api
       def destroy
         if @puzzle.destroy
           render json: {
-            status: { code: 200, message: 'Puzzle deletion successful' },
+            status: { code: 200, message: 'Deleted puzzle successfully.' },
             data: { deleted_puzzle: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes] }
           }, status: :ok
         else
           render json: {
-            status: { code: 422, message: 'Puzzle deletion unsuccessful' },
-            data: @puzzle.errors.full_messages
+            status: {
+              code: 422,
+              message: "Puzzle couldn't be deleted successfully. #{@puzzle.errors.full_messages.to_sentence}"
+            }
           }, status: :unprocessable_entity
         end
       end
@@ -90,8 +94,7 @@ module Api
         @puzzle = Puzzle.find(params[:id])
       rescue ActiveRecord::RecordNotFound => e
         render json: {
-          status: { code: 404, message: e },
-          data: nil
+          status: { code: 404, message: e }
         }, status: :not_found
       end
 

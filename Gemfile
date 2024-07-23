@@ -52,3 +52,6 @@ group :test do
   # Use Rspec for testing
   gem 'rspec-rails'
 end
+
+# Devise and Devise modules for authentication and authorization
+gem 'devise', '~> 4.9'

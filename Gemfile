@@ -55,3 +55,5 @@ end
 
 # Devise and Devise modules for authentication and authorization
 gem 'devise', '~> 4.9'
+gem 'devise-jwt'
+gem 'jsonapi-serializer'

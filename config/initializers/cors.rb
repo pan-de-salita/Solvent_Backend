@@ -7,6 +7,7 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
+    # TODO: Add an origin that matches the domain of deployed client.
     origins 'http://localhost:3000'
 
     resource '*',

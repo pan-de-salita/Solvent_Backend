@@ -11,7 +11,10 @@ module Api
 
         render json: {
           status: { code: 200, message: 'Retrieved all puzzles' },
-          data: PuzzleSerializer.new(puzzles).serializable_hash[:data].map { |data| data[:attributes].to_json }
+          data: {
+            puzzle_count: puzzles.count,
+            puzzles: PuzzleSerializer.new(puzzles).serializable_hash[:data].map { |data| data[:attributes] }
+          }
         }, status: :ok
       end
 
@@ -22,7 +25,7 @@ module Api
         if puzzle.save
           render json: {
             status: { code: 201, message: 'Puzzle creation successful' },
-            data: PuzzleSerializer.new(puzzle).serializable_hash[:data][:attributes].to_json
+            data: PuzzleSerializer.new(puzzle).serializable_hash[:data][:attributes]
           }, status: :created
         else
           render json: {
@@ -41,7 +44,7 @@ module Api
       def show
         render json: {
           status: { code: 200, message: 'Puzzle found' },
-          data: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes].to_json
+          data: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes]
         }, status: :ok
       end
 
@@ -50,7 +53,7 @@ module Api
         if @puzzle.update(puzzle_params)
           render json: {
             status: { code: 200, message: 'Puzzle update successful' },
-            data: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes].to_json
+            data: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes]
           }, status: :ok
         else
           render json: {
@@ -70,7 +73,7 @@ module Api
         if @puzzle.destroy
           render json: {
             message: 'Puzzle deletion successful',
-            data: { deleted_puzzle: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes].to_json }
+            data: { deleted_puzzle: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes] }
           }, status: :ok
         else
           render json: {

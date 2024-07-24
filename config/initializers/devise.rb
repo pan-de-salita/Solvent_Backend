@@ -322,7 +322,7 @@ Devise.setup do |config|
     jwt.revocation_requests = [
       ['DELETE', %r{^/logout$}]
     ]
+    # Commenting this out to use JWT's default expiration time: 2 hours
     # jwt.expiration_time = 30.minutes.to_i
-    jwt.expiration_time = 2.hours.to_i
   end
 end

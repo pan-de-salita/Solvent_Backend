@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'current_user/index'
   api_version = 1
 
   devise_for :users,
@@ -19,6 +20,7 @@ Rails.application.routes.draw do
       get 'health_check', to: 'health_checks#index'
 
       resources :puzzles
+      get '/current_user', to: 'current_user#index'
     end
   end
 end

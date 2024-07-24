@@ -1,21 +1,23 @@
 Rails.application.routes.draw do
+  api_version = 1
+
   devise_for :users,
-             path: '',
+             path: "api/v#{api_version}/auth",
+             only: %i[sessions registrations],
              path_names: {
                # Session paths:
                sign_in: 'login',
                sign_out: 'logout',
 
                # Registration path:
-               registration: '/signup'
+               registration: 'signup'
              },
-             controllers: {
-               sessions: 'users/sessions',
-               registrations: 'users/registrations'
-             }
+             controllers: { sessions: 'users/sessions', registrations: 'users/registrations' }
 
   namespace :api do
     namespace :v1 do
+      get 'health_check', to: 'health_checks#index'
+
       resources :puzzles
     end
   end

@@ -43,7 +43,6 @@ RSpec.describe Puzzle, type: :model do
   context 'when creator_id and language_id is null' do
     it 'rejects an instance creation attempt' do
       puzzle_without_creator_id_and_langauge_id = puzzle
-
       expect(puzzle_without_creator_id_and_langauge_id.creator_id).to be_falsy
       expect(puzzle_without_creator_id_and_langauge_id.language_id).to be_falsy
       expect(puzzle_without_creator_id_and_langauge_id).to_not be_valid

@@ -1,0 +1,2 @@
+class PuzzleFavorite < ApplicationRecord
+end

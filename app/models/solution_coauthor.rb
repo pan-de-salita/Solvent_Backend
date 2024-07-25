@@ -1,0 +1,2 @@
+class SolutionCoauthor < ApplicationRecord
+end

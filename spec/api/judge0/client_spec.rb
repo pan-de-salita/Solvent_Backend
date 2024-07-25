@@ -31,11 +31,13 @@ RSpec.describe Judge0::Client, type: :request do
 
   describe '.statuses' do
     let(:statuses_data) do
-      { 'data' => [
-        { 'id' => 1, 'description' => 'In Queue' },
-        { 'id' => 2, 'description' => 'Processing' },
-        { 'id' => 3, 'description' => 'Accepted' }
-      ] }
+      {
+        'data' => [
+          { 'id' => 1, 'description' => 'In Queue' },
+          { 'id' => 2, 'description' => 'Processing' },
+          { 'id' => 3, 'description' => 'Accepted' }
+        ]
+      }
     end
 
     let(:statuses_body) { base_body.merge(statuses_data).to_json }
@@ -59,11 +61,13 @@ RSpec.describe Judge0::Client, type: :request do
 
   describe '.languages' do
     let(:languages_data) do
-      { 'data' => [
-        { 'id' => 45, 'name' => 'Assembly (NASM 2.14.02)' },
-        { 'id' => 46, 'name' => 'Bash (5.0.0)' },
-        { 'id' => 47, 'name' => 'Basic (FBC 1.07.1)' }
-      ] }
+      {
+        'data' => [
+          { 'id' => 45, 'name' => 'Assembly (NASM 2.14.02)' },
+          { 'id' => 46, 'name' => 'Bash (5.0.0)' },
+          { 'id' => 47, 'name' => 'Basic (FBC 1.07.1)' }
+        ]
+      }
     end
 
     let(:languages_body) { base_body.merge(languages_data).to_json }
@@ -87,11 +91,13 @@ RSpec.describe Judge0::Client, type: :request do
 
   describe '.all_languages' do
     let(:all_languages_data) do
-      { 'data' => [
-        { 'id' => 45, 'name' => 'Assembly (NASM 2.14.02)', 'is_archived' => false },
-        { 'id' => 2, 'name' => 'Bash (4.0)', 'is_archived' => true },
-        { 'id' => 1, 'name' => 'Bash (4.4)', 'is_archived' => true }
-      ] }
+      {
+        'data' => [
+          { 'id' => 45, 'name' => 'Assembly (NASM 2.14.02)', 'is_archived' => false },
+          { 'id' => 2, 'name' => 'Bash (4.0)', 'is_archived' => true },
+          { 'id' => 1, 'name' => 'Bash (4.4)', 'is_archived' => true }
+        ]
+      }
     end
 
     let(:all_languages_body) { base_body.merge(all_languages_data).to_json }
@@ -116,14 +122,16 @@ RSpec.describe Judge0::Client, type: :request do
   context '.language' do
     describe 'when a valid language_id is provided' do
       let(:language_data) do
-        { 'data' => {
-          'id' => 72,
-          'name' => 'Ruby (2.7.0)',
-          'is_archived' => false,
-          'source_file' => 'script.rb',
-          'compile_cmd' => nil,
-          'run_cmd' => '/usr/local/ruby-2.7.0/bin/ruby script.rb'
-        } }
+        {
+          'data' => {
+            'id' => 72,
+            'name' => 'Ruby (2.7.0)',
+            'is_archived' => false,
+            'source_file' => 'script.rb',
+            'compile_cmd' => nil,
+            'run_cmd' => '/usr/local/ruby-2.7.0/bin/ruby script.rb'
+          }
+        }
       end
 
       let(:language_body) { base_body.merge(language_data).to_json }

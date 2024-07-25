@@ -41,6 +41,9 @@ group :development, :test do
 
   # User Factory Bot for model instance generation
   gem 'factory_bot_rails'
+
+  # ENV
+  gem 'dotenv'
 end
 
 group :development do
@@ -54,9 +57,18 @@ end
 group :test do
   # Use Rspec for testing
   gem 'rspec-rails'
+
+  # Webmock for stubbing HTTP requests
+  gem 'webmock'
+
+  # VCR for recording test suite's HTTP interactions
+  gem 'vcr'
 end
 
 # Devise and Devise modules for authentication and authorization
 gem 'devise', '~> 4.9'
 gem 'devise-jwt'
 gem 'jsonapi-serializer'
+
+# HTTP client library abstraction layer
+gem 'faraday'

@@ -10,9 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_25_165246) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_25_171112) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  # Custom types defined in this database.
+  # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "refactor_status", ["pending", "approved", "rejected"]
 
   create_table "comments", force: :cascade do |t|
     t.text "content", null: false
@@ -53,11 +57,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_165246) do
 
   create_table "puzzle_favorites", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "solution_id", null: false
+    t.bigint "puzzle_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["solution_id"], name: "index_puzzle_favorites_on_solution_id"
-    t.index ["user_id", "solution_id"], name: "index_puzzle_favorites_on_user_id_and_solution_id", unique: true
+    t.index ["puzzle_id"], name: "index_puzzle_favorites_on_puzzle_id"
+    t.index ["user_id", "puzzle_id"], name: "index_puzzle_favorites_on_user_id_and_puzzle_id", unique: true
     t.index ["user_id"], name: "index_puzzle_favorites_on_user_id"
   end
 
@@ -74,9 +78,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_165246) do
   end
 
   create_table "refactors", force: :cascade do |t|
+    t.enum "status", default: "pending", null: false, enum_type: "refactor_status"
     t.text "source_code", default: "", null: false
     t.text "description", default: "", null: false
-    t.boolean "accepted?", default: false, null: false
     t.bigint "solution_id", null: false
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
@@ -132,7 +136,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_165246) do
   add_foreign_key "follows", "users", column: "follower_id"
   add_foreign_key "likes", "solutions"
   add_foreign_key "likes", "users"
-  add_foreign_key "puzzle_favorites", "solutions"
+  add_foreign_key "puzzle_favorites", "puzzles"
   add_foreign_key "puzzle_favorites", "users"
   add_foreign_key "puzzles", "languages"
   add_foreign_key "puzzles", "users", column: "creator_id"

@@ -33,4 +33,4 @@
 /config/master.key
 
 # Ignore cassettes.
-/spec/cassettes/*
+/spec/cassettes/judge0/*

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_25_044516) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_25_051105) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -32,9 +32,21 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_044516) do
     t.index ["language_id"], name: "index_puzzles_on_language_id"
   end
 
+  create_table "refactors", force: :cascade do |t|
+    t.text "source_code", default: "", null: false
+    t.text "description", default: "", null: false
+    t.boolean "accepted?", default: false, null: false
+    t.bigint "solution_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["solution_id"], name: "index_refactors_on_solution_id"
+    t.index ["user_id"], name: "index_refactors_on_user_id"
+  end
+
   create_table "solutions", force: :cascade do |t|
     t.text "source_code", default: "", null: false
-    t.text "stdin", default: ""
+    t.text "stdin"
     t.integer "iteration", null: false
     t.bigint "language_id", null: false
     t.bigint "puzzle_id", null: false
@@ -65,6 +77,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_044516) do
 
   add_foreign_key "puzzles", "languages"
   add_foreign_key "puzzles", "users", column: "creator_id"
+  add_foreign_key "refactors", "solutions"
+  add_foreign_key "refactors", "users"
   add_foreign_key "solutions", "languages"
   add_foreign_key "solutions", "puzzles"
   add_foreign_key "solutions", "users"

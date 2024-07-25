@@ -4,13 +4,7 @@ require 'devise/jwt/test_helpers'
 RSpec.describe 'CurrentUsers', type: :request do
   before do
     # TODO: change when User model is updated.
-    @user = User.create(
-      username: 'test_user',
-      email: 'test@mail.com',
-      password: 'foobar',
-      password_confirmation: 'foobar',
-      jti: SecureRandom.uuid
-    )
+    @user = create :user
   end
 
   describe 'GET /index' do

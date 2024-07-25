@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_25_051105) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_25_051518) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "comments", force: :cascade do |t|
+    t.text "content", null: false
+    t.bigint "solution_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["solution_id"], name: "index_comments_on_solution_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
+  end
 
   create_table "languages", force: :cascade do |t|
     t.string "name"
@@ -75,6 +85,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_051105) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "comments", "solutions"
+  add_foreign_key "comments", "users"
   add_foreign_key "puzzles", "languages"
   add_foreign_key "puzzles", "users", column: "creator_id"
   add_foreign_key "refactors", "solutions"

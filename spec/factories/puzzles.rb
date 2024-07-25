@@ -13,12 +13,7 @@
 #
 FactoryBot.define do
   factory :puzzle do
-    trait :with_title do
-      title { 'Test Challenge' }
-    end
-
-    trait :with_description do
-      description { 'Description for Test Challenge' }
-    end
+    title { 'Test Challenge' }
+    description { 'Description for Test Challenge' }
   end
 end

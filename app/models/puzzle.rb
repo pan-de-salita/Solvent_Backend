@@ -16,4 +16,6 @@
 class Puzzle < ApplicationRecord
   validates :title, presence: true, uniqueness: true
   validates :description, presence: true
+  validates :creator_id, presence: true
+  validates :creator_id, presence: true
 end

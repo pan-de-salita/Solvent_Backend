@@ -9,6 +9,6 @@
 #
 FactoryBot.define do
   factory :language do
-    name { "MyString" }
+    name { 'Some Lang' }
   end
 end

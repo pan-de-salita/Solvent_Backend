@@ -7,3 +7,14 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+Language.destroy_all
+
+Judge0::Client.languages[:data].each do |language|
+  language_details = language['name'].include?('(') ? language['name'].scan(/(.*?)\s+\((.*?)\)/).flatten : [language['name']]
+  language_name = language_details[0]
+
+  next unless Language.where(name: language_name).empty?
+
+  Language.create!(id: language['id'], name: language_name)
+end

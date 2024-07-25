@@ -4,6 +4,7 @@ module Api
   module V1
     class PuzzlesController < ApplicationController
       before_action :set_puzzle, except: %i[index create]
+      before_action :authenticate_user!, except: %i[index show]
 
       # GET api/v1/puzzles
       def index
@@ -99,7 +100,7 @@ module Api
       end
 
       def puzzle_params
-        params.require(:puzzle).permit :title, :description, :start_date, :end_date
+        params.require(:puzzle).permit :title, :description, :language_id, :creator_id
       end
     end
   end

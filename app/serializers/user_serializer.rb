@@ -16,5 +16,5 @@
 #
 class UserSerializer
   include JSONAPI::Serializer
-  attributes :id, :email, :created_at, :updated_at
+  attributes :id, :username, :email, :preferred_languages, :created_at, :updated_at
 end

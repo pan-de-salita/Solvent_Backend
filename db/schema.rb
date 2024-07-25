@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_25_043230) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_25_044516) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -32,6 +32,20 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_043230) do
     t.index ["language_id"], name: "index_puzzles_on_language_id"
   end
 
+  create_table "solutions", force: :cascade do |t|
+    t.text "source_code", default: "", null: false
+    t.text "stdin", default: ""
+    t.integer "iteration", null: false
+    t.bigint "language_id", null: false
+    t.bigint "puzzle_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["language_id"], name: "index_solutions_on_language_id"
+    t.index ["puzzle_id"], name: "index_solutions_on_puzzle_id"
+    t.index ["user_id"], name: "index_solutions_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -42,6 +56,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_043230) do
     t.datetime "updated_at", null: false
     t.string "jti", null: false
     t.string "username", null: false
+    t.integer "preferred_languages", default: [], array: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -50,4 +65,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_043230) do
 
   add_foreign_key "puzzles", "languages"
   add_foreign_key "puzzles", "users", column: "creator_id"
+  add_foreign_key "solutions", "languages"
+  add_foreign_key "solutions", "puzzles"
+  add_foreign_key "solutions", "users"
 end

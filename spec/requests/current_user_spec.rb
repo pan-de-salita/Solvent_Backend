@@ -5,6 +5,7 @@ RSpec.describe 'CurrentUsers', type: :request do
   before do
     # TODO: change when User model is updated.
     @user = User.create(
+      username: 'test_user',
       email: 'test@mail.com',
       password: 'foobar',
       password_confirmation: 'foobar',

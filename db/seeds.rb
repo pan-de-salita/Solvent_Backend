@@ -10,11 +10,15 @@
 
 Language.destroy_all
 
-Judge0::Client.languages[:data].each do |language|
+Judge0::Client.languages[:data]
+              .sort_by { |language| language['id'] }
+              .reverse
+              .each do |language|
   language_details = language['name'].include?('(') ? language['name'].scan(/(.*?)\s+\((.*?)\)/).flatten : [language['name']]
   language_name = language_details[0]
+  language_version = language_details[1]
 
   next unless Language.where(name: language_name).empty?
 
-  Language.create!(id: language['id'], name: language_name)
+  Language.create!(id: language['id'], name: language_name, version: language_version)
 end

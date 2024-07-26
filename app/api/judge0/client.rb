@@ -31,7 +31,7 @@ module Judge0
       )
     end
 
-    # NOTE: Deprecated as .evaluate_source_code provides both write and read functionalities for solutions
+    # NOTE: Deprecated as .evaluate_source_code provides both write and read functionalities for source code
     # def self.read_submission(token:, fields: %w[source_code stdout stderr status_id language_id token])
     #   raise ArgumentError, 'Missing required submission token' if token.nil?
     #

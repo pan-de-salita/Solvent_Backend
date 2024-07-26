@@ -189,7 +189,7 @@ RSpec.describe Judge0::Client, type: :request do
     end
   end
 
-  # NOTE: Deprecated as .evaluate_source_code provides both write and read functionalities for solutions
+  # NOTE: Deprecated as .evaluate_source_code provides both write and read functionalities for source_code
   # describe '.read_submission' do
   #   it 'makes a POST request to /submissions/submission_token?base64_encoded=false&fields=...' do
   #     VCR.use_cassette('judge0/client_read_submission') do

@@ -39,8 +39,8 @@ class User < ApplicationRecord
   private
 
   def preferred_languages_must_be_an_array_of_language_ids
-    if preferred_langauges.any? &&
-       !preferred_languages.all? { |preferred_language| Language.include?(preferred_language) }
+    if preferred_languages.present? &&
+       preferred_languages.any? { |preferred_language| Language.where(id: preferred_language).empty? }
       errors.add(:preferred_langauges, 'must be an array of language_ids')
     end
   end

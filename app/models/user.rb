@@ -16,8 +16,6 @@
 #
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: self
@@ -25,6 +23,7 @@ class User < ApplicationRecord
   validates :username, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: true
   validates :password_confirmation, presence: true, on: :create
+  validate :preferred_languages_must_be_an_array_of_language_ids
 
   has_many :puzzles, foreign_key: :creator_id
   has_many :solutions
@@ -36,4 +35,13 @@ class User < ApplicationRecord
   has_many :comments, through: :solutions
   has_many :likes
   has_many :favorite_puzzles, through: :puzzle_favorites
+
+  private
+
+  def preferred_languages_must_be_an_array_of_language_ids
+    if preferred_langauges.any? &&
+       !preferred_languages.all? { |preferred_language| Language.include?(preferred_language) }
+      errors.add(:preferred_langauges, 'must be an array of language_ids')
+    end
+  end
 end

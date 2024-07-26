@@ -72,3 +72,6 @@ gem 'jsonapi-serializer'
 
 # HTTP client library abstraction layer
 gem 'faraday'
+
+# Create factories easily
+gem 'schema_to_scaffold'

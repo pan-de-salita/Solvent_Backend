@@ -28,7 +28,8 @@ class User < ApplicationRecord
   has_many :followed_users, class_name: 'User', foreign_key: :follower_id
   has_many :followers, class_name: 'User', foreign_key: :followed_user_id, dependent: :destroy
   has_many :comments, through: :solutions, dependent: :destroy
-  has_many :likes, dependent: :destroy
+  has_many :solution_likes, dependent: :destroy
+  has_many :liked_solutions, through: :solution_likes, source: :solution
   has_many :favorite_puzzles, through: :puzzle_favorites, dependent: :destroy
 
   validates :username, presence: true, uniqueness: true
@@ -41,7 +42,7 @@ class User < ApplicationRecord
   def preferred_languages_must_be_an_array_of_language_ids
     if preferred_languages.present? &&
        preferred_languages.any? { |preferred_language| Language.where(id: preferred_language).empty? }
-      errors.add(:preferred_langauges, 'must be an array of language_ids')
+      errors.add(:preferred_languages, 'must be an array of language_ids')
     end
   end
 end

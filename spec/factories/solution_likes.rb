@@ -8,5 +8,7 @@
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
-class Like < ApplicationRecord
+FactoryBot.define do
+  factory :solution_like do
+  end
 end

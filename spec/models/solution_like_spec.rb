@@ -8,8 +8,8 @@
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
-FactoryBot.define do
-  factory :like do
-    
-  end
+require 'rails_helper'
+
+RSpec.describe SolutionLike, type: :model do
+  pending "add some examples to (or delete) #{__FILE__}"
 end

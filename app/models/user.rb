@@ -20,21 +20,21 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: self
 
+  has_many :puzzles, foreign_key: :creator_id, dependent: :destroy
+  has_many :solutions, dependent: :destroy
+  has_many :languages, through: :solutions
+  has_many :coauthored_solutions, through: :solution_coauthors, dependent: :destroy
+  has_many :follows, foreign_key: 'follower_id', dependent: :destroy
+  has_many :followed_users, class_name: 'User', foreign_key: :follower_id
+  has_many :followers, class_name: 'User', foreign_key: :followed_user_id, dependent: :destroy
+  has_many :comments, through: :solutions, dependent: :destroy
+  has_many :likes, dependent: :destroy
+  has_many :favorite_puzzles, through: :puzzle_favorites, dependent: :destroy
+
   validates :username, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: true
   validates :password_confirmation, presence: true, on: :create
   validate :preferred_languages_must_be_an_array_of_language_ids
-
-  has_many :puzzles, foreign_key: :creator_id
-  has_many :solutions
-  has_many :languages, through: :solutions
-  has_many :coauthored_solutions, through: :solution_coauthors
-  has_many :follows, foreign_key: 'follower_id'
-  has_many :followed_users, class_name: 'User', foreign_key: :follower_id
-  has_many :followers, class_name: 'User', foreign_key: :followed_user_id
-  has_many :comments, through: :solutions
-  has_many :likes
-  has_many :favorite_puzzles, through: :puzzle_favorites
 
   private
 

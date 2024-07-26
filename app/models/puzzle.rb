@@ -14,12 +14,12 @@
 #  tags        :string           default([]), is an Array
 #
 class Puzzle < ApplicationRecord
-  validates :title, presence: true, uniqueness: true
-  validates :description, presence: true
-  validates :creator_id, presence: true
-  validates :creator_id, presence: true
-  validates :starter_code, presence: true
-
+  has_many :solutions, dependent: :destroy
+  has_many :users, through: :solutions
+  has_many :puzzle_favorites, dependent: :destroy
   belongs_to :language
   belongs_to :creator, class_name: 'User'
+
+  validates :title, presence: true, uniqueness: true
+  validates :description, :language_id, :creator_id, :starter_code, presence: true
 end

@@ -35,12 +35,20 @@ RSpec.describe Puzzle, type: :model do
     end
   end
 
-  context 'when creator_id and language_id is null' do
+  context 'when creator_id and language_id is nil' do
     it 'rejects an instance creation attempt' do
       puzzle.language_id = nil
       puzzle.creator_id = nil
       expect(puzzle.language_id).to be_falsy
       expect(puzzle.creator_id).to be_falsy
+      expect(puzzle).to_not be_valid
+    end
+  end
+
+  context 'when starter_code is nil' do
+    it 'rejects an instance creation attempt' do
+      puzzle.starter_code = nil
+      expect(puzzle.starter_code).to be_falsy
       expect(puzzle).to_not be_valid
     end
   end

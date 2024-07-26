@@ -15,5 +15,14 @@ FactoryBot.define do
   factory :puzzle do
     title { 'Test Challenge' }
     description { 'Description for Test Challenge' }
+    starter_code do
+      '
+      def func(x)
+        # Your code here
+      end
+
+      func(1) == 1
+      '
+    end
   end
 end

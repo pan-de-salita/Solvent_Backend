@@ -18,6 +18,7 @@ class Puzzle < ApplicationRecord
   validates :description, presence: true
   validates :creator_id, presence: true
   validates :creator_id, presence: true
+  validates :starter_code, presence: true
 
   belongs_to :language
   belongs_to :creator, class_name: 'User'

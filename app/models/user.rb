@@ -26,12 +26,12 @@ class User < ApplicationRecord
 
   has_many :puzzles, foreign_key: :creator_id
   has_many :solutions
-  has_many :languages, through: solutions
-  has_many :coauthored_solutions, through: solution_coauthors
+  has_many :languages, through: :solutions
+  has_many :coauthored_solutions, through: :solution_coauthors
   has_many :follows, foreign_key: 'follower_id'
-  has_many :followed_users, class_name: 'User', foreign_key: 'follower_id'
-  has_many :followers, class_name: 'User', foreign_key: 'followed_user_id'
+  has_many :followed_users, class_name: 'User', foreign_key: :follower_id
+  has_many :followers, class_name: 'User', foreign_key: :followed_user_id
   has_many :comments, through: :solutions
   has_many :likes
-  has_many :favorite_puzzles, through: puzzle_favorites
+  has_many :favorite_puzzles, through: :puzzle_favorites
 end

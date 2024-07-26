@@ -169,37 +169,42 @@ RSpec.describe Judge0::Client, type: :request do
     end
   end
 
-  describe '.write_submission' do
-    it 'makes a POST request to /submissions/?base64_encoded=false&wait=false' do
-      VCR.use_cassette('judge0/client_write_submission') do
-        response = Judge0::Client.write_submission(
+  describe '.evaluate_source_code' do
+    it 'makes a POST request to /submissions/?base64_encoded=false&wait=true' do
+      VCR.use_cassette('judge0/client_evaluate_source_code') do
+        response = Judge0::Client.evaluate_source_code(
           source_code: write_submission_body['source_code'],
           language_id: write_submission_body['language_id']
         )
 
-        expect(response[:status]).to be(201)
-        expect(response[:reason_phrase]).to eq('Created')
-        expect(response[:submissions_remaining] < 50).to be_truthy
-        expect(response[:data]['token']).to_not be_blank
-      end
-    end
-  end
-
-  describe '.read_submission' do
-    it 'makes a POST request to /submissions/submission_token?base64_encoded=false&fields=...' do
-      VCR.use_cassette('judge0/client_read_submission') do
-        write_submission_data = YAML.load_file('spec/cassettes/judge0/client_write_submission.yml')
-        submission_token = JSON.parse(write_submission_data['http_interactions'].first['response']['body']['string'])['token']
-
-        response = Judge0::Client.read_submission(token: submission_token)
+        p response
 
         expect(response[:status]).to be(200)
         expect(response[:reason_phrase]).to eq('OK')
         expect(response[:submissions_remaining] < 50).to be_truthy
-        expect(response[:data]['source_code']).to eq(write_submission_body['source_code'])
-        expect(response[:data]['language_id']).to eq(write_submission_body['language_id'])
         expect(response[:data]['stdout'].chomp.to_i).to eq(10)
+        expect(response[:data]['token']).to_not be_blank
+        expect(response[:data]['status']['description']).to eq('Accepted')
       end
     end
   end
+
+  # NOTE: Deprecated as .evaluate_source_code provides both write and read functionalities for solutions
+  # describe '.read_submission' do
+  #   it 'makes a POST request to /submissions/submission_token?base64_encoded=false&fields=...' do
+  #     VCR.use_cassette('judge0/client_read_submission') do
+  #       write_submission_data = YAML.load_file('spec/cassettes/judge0/client_write_submission.yml')
+  #       submission_token = JSON.parse(write_submission_data['http_interactions'].first['response']['body']['string'])['token']
+  #
+  #       response = Judge0::Client.read_submission(token: submission_token)
+  #
+  #       expect(response[:status]).to be(200)
+  #       expect(response[:reason_phrase]).to eq('OK')
+  #       expect(response[:submissions_remaining] < 50).to be_truthy
+  #       expect(response[:data]['source_code']).to eq(write_submission_body['source_code'])
+  #       expect(response[:data]['language_id']).to eq(write_submission_body['language_id'])
+  #       expect(response[:data]['stdout'].chomp.to_i).to eq(10)
+  #     end
+  #   end
+  # end
 end

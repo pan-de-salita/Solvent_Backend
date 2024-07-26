@@ -8,5 +8,7 @@
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
-class Follow < ApplicationRecord
+FactoryBot.define do
+  factory :relationship do
+  end
 end

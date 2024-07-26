@@ -22,6 +22,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: self
 
+  validates :username, presence: true, uniqueness: true
+  validates :email, presence: true, uniqueness: true
   validates :password_confirmation, presence: true, on: :create
 
   has_many :puzzles, foreign_key: :creator_id

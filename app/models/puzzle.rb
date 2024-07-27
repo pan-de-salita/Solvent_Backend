@@ -17,9 +17,8 @@ class Puzzle < ApplicationRecord
   has_many :solutions, dependent: :destroy
   has_many :users, through: :solutions
   has_many :puzzle_favorites, dependent: :destroy
-  belongs_to :language
   belongs_to :creator, class_name: 'User'
 
   validates :title, presence: true, uniqueness: true
-  validates :description, :language_id, :creator_id, :starter_code, presence: true
+  validates :description, :creator_id, presence: true
 end

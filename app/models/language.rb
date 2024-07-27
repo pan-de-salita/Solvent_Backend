@@ -10,4 +10,6 @@
 #
 class Language < ApplicationRecord
   has_many :solutions, dependent: :destroy
+
+  validates :name, presence: true, uniqueness: true
 end

@@ -72,7 +72,7 @@ RSpec.describe User, type: :model do
       invalid_language_ids.each { |invalid_language_id| user.preferred_languages << invalid_language_id }
 
       expect(
-        user.preferred_languages.drop(3).all? do |invalid_language_id|
+        user.preferred_languages.last(3).all? do |invalid_language_id|
           Language.where(id: invalid_language_id).empty?
         end
       ).to be_truthy

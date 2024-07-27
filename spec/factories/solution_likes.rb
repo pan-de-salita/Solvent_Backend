@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: likes
+# Table name: solution_likes
 #
 #  id          :bigint           not null, primary key
 #  user_id     :bigint           not null

@@ -4,7 +4,6 @@
 #
 #  id          :bigint           not null, primary key
 #  source_code :text             default(""), not null
-#  stdin       :text
 #  iteration   :integer          not null
 #  language_id :bigint           not null
 #  puzzle_id   :bigint           not null
@@ -28,8 +27,12 @@ class Solution < ApplicationRecord
   private
 
   def iteration_must_be_sequential
-    previous_iterations = User.solutions.where(puzzle_id:)
-    return unless previous_iterations.present? && iteration != previous_iterations.last.iteration + 1
+    last_iteration = Solution.where(user_id:, puzzle_id:)
+                             .order(iteration: :desc)
+                             .limit(1)
+                             .pluck(:iteration)
+                             .first
+    return unless last_iteration && iteration != last_iteration + 1
 
     errors.add(:iteration, 'must be sequential')
   end

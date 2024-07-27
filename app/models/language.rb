@@ -9,4 +9,5 @@
 #  version    :string
 #
 class Language < ApplicationRecord
+  has_many :solutions, dependent: :destroy
 end

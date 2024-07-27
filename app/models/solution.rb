@@ -21,7 +21,8 @@ class Solution < ApplicationRecord
   belongs_to :user
   belongs_to :language
 
-  validates :source_code, :iteration, :language_id, :puzzle_id, :user_id, presence: true
+  validates :source_code, :language_id, :puzzle_id, :user_id, presence: true
+  validates :iteration, presence: true, comparison: { greater_than_or_equal_to: 1 }
   validate :iteration_must_be_sequential
 
   private

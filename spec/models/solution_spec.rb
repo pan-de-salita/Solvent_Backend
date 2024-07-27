@@ -16,8 +16,12 @@ require 'rails_helper'
 RSpec.describe Solution, type: :model do
   let!(:user) { create :user }
   let!(:puzzle) do
-    create :puzzle, title: 'Multiples of 3 or 5', description: 'Find the sum of all the multiples of 3 or 5 below 1000.',
-                    creator_id: user.id
+    create(
+      :puzzle,
+      title: 'Multiples of 3 or 5',
+      description: 'Find the sum of all the multiples of 3 or 5 below 1000.',
+      creator_id: user.id
+    )
   end
   let!(:ruby) { create :language, name: 'Ruby' }
   let!(:solution) { build :solution, language_id: ruby.id, puzzle_id: puzzle.id, user_id: user.id }
@@ -54,6 +58,14 @@ RSpec.describe Solution, type: :model do
       new_solution.iteration += 2
       expect(new_solution.iteration).to eq(3)
       expect(new_solution).to_not be_valid
+    end
+  end
+
+  context "when a solution's iteration is smaller than 1" do
+    it 'rejects an instance creation attempt' do
+      solution.iteration = -1
+      expect(solution.iteration).to eq(-1)
+      expect(solution).to_not be_valid
     end
   end
 end

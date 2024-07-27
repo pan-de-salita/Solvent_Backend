@@ -24,7 +24,7 @@ class User < ApplicationRecord
   has_many :solutions, dependent: :destroy
   has_many :languages, through: :solutions
   has_many :coauthored_solutions, through: :solution_coauthors, dependent: :destroy
-  has_many :follows, foreign_key: 'follower_id', dependent: :destroy
+  has_many :relationships, foreign_key: 'follower_id', dependent: :destroy
   has_many :followed_users, class_name: 'User', foreign_key: :follower_id
   has_many :followers, class_name: 'User', foreign_key: :followed_user_id, dependent: :destroy
   has_many :comments, through: :solutions, dependent: :destroy

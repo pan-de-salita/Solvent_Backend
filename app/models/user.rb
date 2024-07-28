@@ -31,10 +31,10 @@ class User < ApplicationRecord
                                    dependent: :destroy
   has_many :following, through: :active_relationships, source: :followed
   has_many :followers, through: :passive_relationships
-
-  has_many :comments, through: :solutions, dependent: :destroy
   has_many :solution_likes, dependent: :destroy
   has_many :liked_solutions, through: :solution_likes, source: :solution
+
+  has_many :comments, through: :solutions, dependent: :destroy
   has_many :favorite_puzzles, through: :puzzle_favorites, dependent: :destroy
 
   validates :username, presence: true, uniqueness: true

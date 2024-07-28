@@ -52,25 +52,25 @@ module Api
       end
 
       # PATCH/PUT api/v1/solutions/:id
-      def update
-        if @solution.update(solution_params)
-          render json: {
-            status: { code: 200, message: 'Updated solution successfully.' },
-            data: SolutionSerializer.new(@solution).serializable_hash[:data][:attributes]
-          }, status: :ok
-        else
-          render json: {
-            status: {
-              code: 422,
-              message: "Solution couldn't be updated successfully. #{@solution.errors.full_messages.to_sentence}."
-            }
-          }, status: :unprocessable_entity
-        end
-      rescue StandardError => e
-        render json: {
-          status: { status: 400, message: e }
-        }, status: :bad_request
-      end
+      # def update
+      #   if @solution.update(solution_params)
+      #     render json: {
+      #       status: { code: 200, message: 'Updated solution successfully.' },
+      #       data: SolutionSerializer.new(@solution).serializable_hash[:data][:attributes]
+      #     }, status: :ok
+      #   else
+      #     render json: {
+      #       status: {
+      #         code: 422,
+      #         message: "Solution couldn't be updated successfully. #{@solution.errors.full_messages.to_sentence}."
+      #       }
+      #     }, status: :unprocessable_entity
+      #   end
+      # rescue StandardError => e
+      #   render json: {
+      #     status: { status: 400, message: e }
+      #   }, status: :bad_request
+      # end
 
       # DELETE api/v1/solutions/:id
       def destroy

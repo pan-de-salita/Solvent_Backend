@@ -20,7 +20,7 @@ Rails.application.routes.draw do
       resources :languages, only: %i[index show]
       resources :puzzles
       resources :solutions, except: :update
-      resources :relationships, except: :update
+      resources :relationships, only: %i[create delete]
     end
   end
 end

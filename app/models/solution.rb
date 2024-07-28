@@ -21,19 +21,19 @@ class Solution < ApplicationRecord
   belongs_to :language
 
   validates :source_code, :language_id, :puzzle_id, :user_id, presence: true
-  validate :source_code_yields_correct_output
+  validate :source_code_yields_expected_output
 
   scope :by_user, ->(user_id) { where(user_id:).order(created_at: :desc) }
 
   private
 
-  def source_code_yields_correct_output
+  def source_code_yields_expected_output
     return if Rails.env.test?
 
     evaluation = Judge0::Client.evaluate_source_code(source_code:, language_id:)
     return if evaluation[:status] == 200 && evaluation[:data]['stdout'] == puzzle.expected_output
 
-    error_message = "yielded the wrong output. stdout: #{evaluation[:data]['stdout'] || 'nil'}. stderr: #{evaluation[:data]['stderr']}"
+    error_message = "yielded the incorrect output. stdout: #{evaluation[:data]['stdout'] || 'nil'}. stderr: #{evaluation[:data]['stderr']}"
     errors.add(:source_code, error_message)
   end
 end

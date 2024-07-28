@@ -10,13 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_28_084700) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_28_105209) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  # Custom types defined in this database.
-  # Note that some types may not work with other database engines. Be careful if changing database.
-  create_enum "refactor_status", ["pending", "approved", "rejected"]
 
   create_table "comments", force: :cascade do |t|
     t.text "content", null: false
@@ -58,18 +54,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_28_084700) do
     t.index ["creator_id"], name: "index_puzzles_on_creator_id"
   end
 
-  create_table "refactors", force: :cascade do |t|
-    t.enum "status", default: "pending", null: false, enum_type: "refactor_status"
-    t.text "source_code", default: "", null: false
-    t.text "description", default: "", null: false
-    t.bigint "solution_id", null: false
-    t.bigint "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["solution_id"], name: "index_refactors_on_solution_id"
-    t.index ["user_id"], name: "index_refactors_on_user_id"
-  end
-
   create_table "relationships", force: :cascade do |t|
     t.bigint "follower_id", null: false
     t.bigint "followed_id", null: false
@@ -78,16 +62,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_28_084700) do
     t.index ["followed_id"], name: "index_relationships_on_followed_id"
     t.index ["follower_id", "followed_id"], name: "index_relationships_on_follower_id_and_followed_id", unique: true
     t.index ["follower_id"], name: "index_relationships_on_follower_id"
-  end
-
-  create_table "solution_coauthors", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "solution_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["solution_id"], name: "index_solution_coauthors_on_solution_id"
-    t.index ["user_id", "solution_id"], name: "index_solution_coauthors_on_user_id_and_solution_id", unique: true
-    t.index ["user_id"], name: "index_solution_coauthors_on_user_id"
   end
 
   create_table "solution_likes", force: :cascade do |t|
@@ -135,12 +109,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_28_084700) do
   add_foreign_key "puzzle_favorites", "puzzles"
   add_foreign_key "puzzle_favorites", "users"
   add_foreign_key "puzzles", "users", column: "creator_id"
-  add_foreign_key "refactors", "solutions"
-  add_foreign_key "refactors", "users"
   add_foreign_key "relationships", "users", column: "followed_id"
   add_foreign_key "relationships", "users", column: "follower_id"
-  add_foreign_key "solution_coauthors", "solutions"
-  add_foreign_key "solution_coauthors", "users"
   add_foreign_key "solution_likes", "solutions"
   add_foreign_key "solution_likes", "users"
   add_foreign_key "solutions", "languages"

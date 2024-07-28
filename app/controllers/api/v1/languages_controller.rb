@@ -20,7 +20,7 @@ module Api
 
       # GET api/v1/languages/:id
       def show
-        # Error raised via set_puzzle in case of no id match.
+        # Error raised via set_language in case of no id match.
         render json: {
           status: { code: 200, message: 'Got puzzle successfully.' },
           data: LanguageSerializer.new(@language).serializable_hash[:data][:attributes]

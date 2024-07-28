@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  get 'current_user/index'
   api_version = 1
 
   devise_for :users,

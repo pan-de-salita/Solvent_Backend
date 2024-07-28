@@ -5,9 +5,9 @@ module Api
     class RelationshipsController < ApplicationController
       before_action :authenticate_user!
 
-      # POST api/v1/relationships
+      # POST api/v1/relationships/:followed_id
       def create
-        other_user = User.find(params[:followed_id])
+        other_user = User.find_by(id: follow_params[:followed_id])
 
         if current_user.follow(other_user)
           render json: {
@@ -30,7 +30,7 @@ module Api
 
       # DELETE api/v1/relationships/:id
       def destroy
-        other_user = Relationship.find(params[:id]).followed
+        other_user = Relationship.find(unfollow_params[:id]).followed
 
         if current_user.unfollow(other_user)
           render json: {
@@ -45,6 +45,16 @@ module Api
             }
           }, status: :unprocessable_entity
         end
+      end
+
+      private
+
+      def follow_params
+        params.require(:relationship).permit :followed_id
+      end
+
+      def unfollow_params
+        params.require(:relationship).permit :id
       end
     end
   end

@@ -23,16 +23,16 @@ class User < ApplicationRecord
   has_many :puzzles, foreign_key: :creator_id, dependent: :destroy
   has_many :solutions, dependent: :destroy
   has_many :languages, through: :solutions
-
-  # has_many :relationships, foreign_key: 'follower_id', dependent: :destroy
-  # has_many :followed_users, class_name: 'User', foreign_key: :follower_id
-  # has_many :followers, class_name: 'User', foreign_key: :followed_user_id, dependent: :destroy
   has_many :active_relationships, class_name: 'Relationship',
                                   foreign_key: 'follower_id',
                                   dependent: :destroy
+  has_many :passive_relationships, class_name: 'Relationship',
+                                   foreign_key: 'followed_id',
+                                   dependent: :destroy
+  has_many :following, through: :active_relationships, source: :followed
+  has_many :followers, through: :passive_relationships
 
   has_many :comments, through: :solutions, dependent: :destroy
-
   has_many :solution_likes, dependent: :destroy
   has_many :liked_solutions, through: :solution_likes, source: :solution
   has_many :favorite_puzzles, through: :puzzle_favorites, dependent: :destroy
@@ -41,6 +41,18 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true
   validates :password_confirmation, presence: true, on: :create
   validate :preferred_languages_must_be_an_array_of_language_ids
+
+  def follow(other_user)
+    following << other_user unless self == other_user
+  end
+
+  def unfollow(other_user)
+    following.delete(other_user)
+  end
+
+  def following?(other_user)
+    following.include?(other_user)
+  end
 
   private
 

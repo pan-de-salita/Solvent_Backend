@@ -16,8 +16,8 @@
 #
 FactoryBot.define do
   factory :user do
-    username { 'test_user' }
-    email { 'test@mail.com' }
+    sequence(:username) { |n| "testuser#{n}" }
+    sequence(:email) { |n| "user#{n}@mail.com" }
     password { 'foobar' }
     password_confirmation { 'foobar' }
     jti { SecureRandom.uuid }

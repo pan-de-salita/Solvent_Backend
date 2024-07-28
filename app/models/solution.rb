@@ -21,13 +21,13 @@ class Solution < ApplicationRecord
   belongs_to :language
 
   validates :source_code, :language_id, :puzzle_id, :user_id, presence: true
-  validate :compare_output
+  validate :source_code_yields_correct_output
 
   scope :by_user, ->(user_id) { where(user_id:).order(created_at: :desc) }
 
   private
 
-  def compare_output
+  def source_code_yields_correct_output
     return if Rails.env.test?
 
     evaluation = Judge0::Client.evaluate_source_code(source_code:, language_id:)

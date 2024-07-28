@@ -26,6 +26,10 @@ class Puzzle < ApplicationRecord
 
   scope :recent, -> { order(created_at: :desc) }
 
+  def puzzle_creator?(user)
+    user == creator
+  end
+
   private
 
   def format_expected_output

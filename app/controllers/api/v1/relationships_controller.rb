@@ -4,12 +4,15 @@ module Api
   module V1
     class RelationshipsController < ApplicationController
       before_action :authenticate_user!
+      before_action :set_relationship, only: :destroy
 
       # POST api/v1/relationships/:followed_id
       def create
         other_user = User.find_by(id: follow_params[:followed_id])
 
         if current_user.follow(other_user)
+          relationship = current_user.active_relationships.last
+
           render json: {
             status: { code: 201, message: 'Created relationship successfully.' },
             data: RelationshipSerializer.new(relationship).serializable_hash[:data][:attributes]
@@ -30,12 +33,11 @@ module Api
 
       # DELETE api/v1/relationships/:id
       def destroy
-        other_user = Relationship.find(unfollow_params[:id]).followed
-
-        if current_user.unfollow(other_user)
+        if current_user.unfollow(@relationship.followed)
           render json: {
             status: { code: 200, message: 'Deleted relationship successfully.' },
-            data: { deleted_relationship: RelationshipSerializer.new(@relationship).serializable_hash[:data][:attributes] }
+            data: RelationshipSerializer.new(@relationship).serializable_hash[:data][:attributes]
+
           }, status: :ok
         else
           render json: {
@@ -49,12 +51,16 @@ module Api
 
       private
 
-      def follow_params
-        params.require(:relationship).permit :followed_id
+      def set_relationship
+        @relationship = Relationship.includes(:follower, :followed).find(params[:id])
+      rescue ActiveRecord::RecordNotFound => e
+        render json: {
+          status: { code: 404, message: e }
+        }, status: :not_found
       end
 
-      def unfollow_params
-        params.require(:relationship).permit :id
+      def follow_params
+        params.require(:relationship).permit :followed_id
       end
     end
   end

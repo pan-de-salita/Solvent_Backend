@@ -32,7 +32,7 @@ module Api
           render json: {
             status: {
               code: 422,
-              message: "Solution couldn't be created successfully. #{solution.errors.full_messages.to_sentence}."
+              message: "Solution couldn't be created successfully. #{solution.errors.full_messages.to_sentence}"
             }
           }, status: :unprocessable_entity
         end
@@ -44,6 +44,8 @@ module Api
 
       # GET api/v1/solutions/:id
       def show
+        return unless current_user_is_solution_creator?
+
         # Error raised via set_solution in case of no id match.
         render json: {
           status: { code: 200, message: 'Got solution successfully.' },
@@ -53,7 +55,7 @@ module Api
 
       # PATCH/PUT api/v1/solutions/:id
       def update
-        if @solution.update(solution_params)
+        if current_user_is_solution_creator? && @solution.update(solution_params)
           render json: {
             status: { code: 200, message: 'Updated solution successfully.' },
             data: SolutionSerializer.new(@solution).serializable_hash[:data][:attributes]
@@ -62,7 +64,7 @@ module Api
           render json: {
             status: {
               code: 422,
-              message: "Solution couldn't be updated successfully. #{@solution.errors.full_messages.to_sentence}."
+              message: "Solution couldn't be updated successfully. #{@solution.errors.full_messages.to_sentence}"
             }
           }, status: :unprocessable_entity
         end
@@ -74,7 +76,7 @@ module Api
 
       # DELETE api/v1/solutions/:id
       def destroy
-        if @solution.destroy
+        if current_user_is_solution_creator? && @solution.destroy
           render json: {
             status: { code: 200, message: 'Deleted solution successfully.' },
             data: { deleted_solution: SolutionSerializer.new(@solution).serializable_hash[:data][:attributes] }
@@ -83,7 +85,7 @@ module Api
           render json: {
             status: {
               code: 422,
-              message: "Solution couldn't be deleted successfully. #{@solution.errors.full_messages.to_sentence}."
+              message: "Solution couldn't be deleted successfully. #{@solution.errors.full_messages.to_sentence}"
             }
           }, status: :unprocessable_entity
         end
@@ -101,6 +103,10 @@ module Api
 
       def solution_params
         params.require(:solution).permit :source_code, :language_id, :puzzle_id, :user_id
+      end
+
+      def current_user_is_solution_creator?
+        @solution.user == current_user
       end
     end
   end

@@ -20,7 +20,7 @@ Rails.application.routes.draw do
       resources :languages, only: %i[index show]
       resources :puzzles
       resources :solutions
-      resources :relationships, only: %i[create delete]
+      resources :relationships, only: %i[create destroy]
     end
   end
 end

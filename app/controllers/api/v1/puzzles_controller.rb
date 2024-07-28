@@ -32,7 +32,7 @@ module Api
           render json: {
             status: {
               code: 422,
-              message: "Puzzle couldn't be created successfully. #{puzzle.errors.full_messages.to_sentence}."
+              message: "Puzzle couldn't be created successfully. #{puzzle.errors.full_messages.to_sentence}"
             }
           }, status: :unprocessable_entity
         end
@@ -53,7 +53,7 @@ module Api
 
       # PATCH/PUT api/v1/puzzles/:id
       def update
-        if @puzzle.update(puzzle_params)
+        if current_user_is_puzzle_creator? && @puzzle.update(puzzle_params)
           render json: {
             status: { code: 200, message: 'Updated puzzle successfully.' },
             data: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes]
@@ -62,7 +62,7 @@ module Api
           render json: {
             status: {
               code: 422,
-              message: "Puzzle couldn't be updated successfully. #{@puzzle.errors.full_messages.to_sentence}."
+              message: "Puzzle couldn't be updated successfully. #{@puzzle.errors.full_messages.to_sentence}"
             }
           }, status: :unprocessable_entity
         end
@@ -74,7 +74,7 @@ module Api
 
       # DELETE api/v1/puzzles/:id
       def destroy
-        if @puzzle.destroy
+        if current_user_is_puzzle_creator? && @puzzle.destroy
           render json: {
             status: { code: 200, message: 'Deleted puzzle successfully.' },
             data: { deleted_puzzle: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes] }
@@ -83,7 +83,7 @@ module Api
           render json: {
             status: {
               code: 422,
-              message: "Puzzle couldn't be deleted successfully. #{@puzzle.errors.full_messages.to_sentence}."
+              message: "Puzzle couldn't be deleted successfully. #{@puzzle.errors.full_messages.to_sentence}"
             }
           }, status: :unprocessable_entity
         end
@@ -92,7 +92,7 @@ module Api
       private
 
       def set_puzzle
-        @puzzle = Puzzle.find(params[:id]).includes(:creator, :solutions)
+        @puzzle = Puzzle.includes(:creator, :solutions).find(params[:id])
       rescue ActiveRecord::RecordNotFound => e
         render json: {
           status: { code: 404, message: e }
@@ -101,6 +101,10 @@ module Api
 
       def puzzle_params
         params.require(:puzzle).permit :title, :description, :creator_id, :expected_output
+      end
+
+      def current_user_is_puzzle_creator?
+        @puzzle.creator == current_user
       end
     end
   end

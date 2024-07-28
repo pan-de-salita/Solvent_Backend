@@ -11,11 +11,10 @@
 #  updated_at  :datetime         not null
 #
 class Solution < ApplicationRecord
-  has_many :refactors, dependent: :destroy
   has_many :solution_likes, dependent: :destroy
   has_many :comments, dependent: :destroy
-  has_many :solution_coauthors, dependent: :destroy
   has_many :liking_users, through: :solution_likes, source: :user
+
   belongs_to :puzzle
   belongs_to :user
   belongs_to :language

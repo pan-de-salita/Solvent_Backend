@@ -23,11 +23,16 @@ class User < ApplicationRecord
   has_many :puzzles, foreign_key: :creator_id, dependent: :destroy
   has_many :solutions, dependent: :destroy
   has_many :languages, through: :solutions
-  has_many :coauthored_solutions, through: :solution_coauthors, dependent: :destroy
-  has_many :relationships, foreign_key: 'follower_id', dependent: :destroy
-  has_many :followed_users, class_name: 'User', foreign_key: :follower_id
-  has_many :followers, class_name: 'User', foreign_key: :followed_user_id, dependent: :destroy
+
+  # has_many :relationships, foreign_key: 'follower_id', dependent: :destroy
+  # has_many :followed_users, class_name: 'User', foreign_key: :follower_id
+  # has_many :followers, class_name: 'User', foreign_key: :followed_user_id, dependent: :destroy
+  has_many :active_relationships, class_name: 'Relationship',
+                                  foreign_key: 'follower_id',
+                                  dependent: :destroy
+
   has_many :comments, through: :solutions, dependent: :destroy
+
   has_many :solution_likes, dependent: :destroy
   has_many :liked_solutions, through: :solution_likes, source: :solution
   has_many :favorite_puzzles, through: :puzzle_favorites, dependent: :destroy

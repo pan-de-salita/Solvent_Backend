@@ -26,10 +26,26 @@ class Solution < ApplicationRecord
 
   private
 
+  # def source_code_yields_expected_output
+  #   return if Rails.env.test?
+  #
+  #   evaluation = Judge0::Client.evaluate_source_code(source_code:, language_id:)
+  #   return if evaluation[:status] == 200 && evaluation[:data]['stdout'] == puzzle.expected_output
+  #
+  #   error_message = "yielded the incorrect output. stdout: #{evaluation[:data]['stdout'] || 'nil'}. stderr: #{evaluation[:data]['stderr']}"
+  #   errors.add(:source_code, error_message)
+  # end
+
   def source_code_yields_expected_output
     return if Rails.env.test?
 
-    evaluation = Judge0::Client.evaluate_source_code(source_code:, language_id:)
+    begin
+      evaluation = Judge0::Client.evaluate_source_code(source_code:, language_id:)
+    rescue StandardError => e
+      errors.add(:base, "Error evaluating source code: #{e.message}")
+      return
+    end
+
     return if evaluation[:status] == 200 && evaluation[:data]['stdout'] == puzzle.expected_output
 
     error_message = "yielded the incorrect output. stdout: #{evaluation[:data]['stdout'] || 'nil'}. stderr: #{evaluation[:data]['stderr']}"

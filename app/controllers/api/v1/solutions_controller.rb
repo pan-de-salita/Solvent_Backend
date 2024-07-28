@@ -4,11 +4,11 @@ module Api
   module V1
     class SolutionsController < ApplicationController
       before_action :set_solution, except: %i[index create]
-      before_action :authenticate_user!, except: %i[index show]
+      before_action :authenticate_user!
 
       # GET api/v1/solutions
       def index
-        solutions = filter_solutions_by_user(params[:user_id])
+        solutions = current_user.solutions
 
         render json: {
           status: { code: 200, message: 'Got all solutions successfully.' },
@@ -101,10 +101,6 @@ module Api
 
       def solution_params
         params.require(:solution).permit :source_code, :language_id, :puzzle_id, :user_id
-      end
-
-      def filter_solutions_by_user(user_id)
-        user_id ? Solution.by_user(user_id) : Solution.all
       end
     end
   end

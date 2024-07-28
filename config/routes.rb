@@ -19,7 +19,7 @@ Rails.application.routes.draw do
       get '/auth/current_user', to: 'current_user#index'
       resources :languages, only: %i[index show]
       resources :puzzles
-      resources :solutions, except: :update
+      resources :solutions
       resources :relationships, only: %i[create delete]
     end
   end

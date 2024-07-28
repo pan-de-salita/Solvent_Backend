@@ -100,7 +100,7 @@ module Api
       end
 
       def puzzle_params
-        params.require(:puzzle).permit :title, :description, :language_id, :creator_id
+        params.require(:puzzle).permit :title, :description, :creator_id, :expected_output
       end
     end
   end

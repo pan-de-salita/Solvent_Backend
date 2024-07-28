@@ -177,8 +177,6 @@ RSpec.describe Judge0::Client, type: :request do
           language_id: write_submission_body['language_id']
         )
 
-        p response
-
         expect(response[:status]).to be(200)
         expect(response[:reason_phrase]).to eq('OK')
         expect(response[:submissions_remaining] < 50).to be_truthy

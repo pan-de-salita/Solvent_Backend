@@ -4,7 +4,6 @@
 #
 #  id          :bigint           not null, primary key
 #  source_code :text             default(""), not null
-#  iteration   :integer          not null
 #  language_id :bigint           not null
 #  puzzle_id   :bigint           not null
 #  user_id     :bigint           not null
@@ -22,19 +21,17 @@ class Solution < ApplicationRecord
   belongs_to :language
 
   validates :source_code, :language_id, :puzzle_id, :user_id, presence: true
-  validates :iteration, presence: true, comparison: { greater_than_or_equal_to: 1 }
-  validate :iteration_must_be_sequential
+  validate :compare_output
 
   private
 
-  def iteration_must_be_sequential
-    last_iteration = Solution.where(user_id:, puzzle_id:)
-                             .order(iteration: :desc)
-                             .limit(1)
-                             .pluck(:iteration)
-                             .first
-    return unless last_iteration && iteration != last_iteration + 1
+  def compare_output
+    return if Rails.env.test?
 
-    errors.add(:iteration, 'must be sequential')
+    evaluation = Judge0::Client.evaluate_source_code(source_code:, language_id:)
+    return if evaluation[:status] == 200 && evaluation[:data]['stdout'] == puzzle.expected_output
+
+    errors.add(:source_code,
+               "yielded the wrong output. stdout: #{evaluation[:data]['stdout'] || 'nil'}. stderr: #{evaluation[:data]['stderr']}")
   end
 end

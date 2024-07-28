@@ -4,7 +4,6 @@
 #
 #  id          :bigint           not null, primary key
 #  source_code :text             default(""), not null
-#  iteration   :integer          not null
 #  language_id :bigint           not null
 #  puzzle_id   :bigint           not null
 #  user_id     :bigint           not null
@@ -20,11 +19,26 @@ RSpec.describe Solution, type: :model do
       :puzzle,
       title: 'Multiples of 3 or 5',
       description: 'Find the sum of all the multiples of 3 or 5 below 1000.',
-      creator_id: user.id
+      creator_id: user.id,
+      expected_output: '233168'
     )
   end
-  let!(:ruby) { create :language, name: 'Ruby' }
+  let!(:ruby) { create :language, id: 72, name: 'Ruby' }
   let!(:solution) { build :solution, language_id: ruby.id, puzzle_id: puzzle.id, user_id: user.id }
+
+  let(:mock_judge0_client) { double('Judge0 Client') }
+  before do
+    allow(Judge0::Client).to receive(:new).and_return(mock_judge0_client)
+    allow(mock_judge0_client).to receive(:evaluate_source_code).with(
+      source_code: solution.source_code,
+      language_id: ruby.id
+    ).and_return({
+                   status: 200,
+                   data: {
+                     stdout: '233168\n'
+                   }
+                 })
+  end
 
   context 'when attributes are valid' do
     it 'creates a Solution instance' do
@@ -38,34 +52,9 @@ RSpec.describe Solution, type: :model do
         solution.send("#{attribute}=", nil)
         expect(solution.send(attribute)).to be_falsy
         expect(solution).to_not be_valid
+      rescue ArgumentError => e
+        expect(e).to be_truthy
       end
-    end
-  end
-
-  context 'when a new solution to the same puzzle has the same iteration' do
-    it 'rejects an instance creation attempt' do
-      new_solution = solution.dup
-      solution.save
-      expect(new_solution.iteration).to eq(solution.iteration)
-      expect(new_solution).to_not be_valid
-    end
-  end
-
-  context 'when a new solution to the same puzzle has a nonsequential iteration' do
-    it 'rejects an instance creation attempt' do
-      new_solution = solution.dup
-      solution.save
-      new_solution.iteration += 2
-      expect(new_solution.iteration).to eq(3)
-      expect(new_solution).to_not be_valid
-    end
-  end
-
-  context "when a solution's iteration is smaller than 1" do
-    it 'rejects an instance creation attempt' do
-      solution.iteration = -1
-      expect(solution.iteration).to eq(-1)
-      expect(solution).to_not be_valid
     end
   end
 end

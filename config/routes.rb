@@ -18,8 +18,8 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get '/auth/current_user', to: 'current_user#index'
-
       resources :puzzles
+      resources :solutions
     end
   end
 end

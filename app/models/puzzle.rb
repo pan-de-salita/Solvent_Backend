@@ -24,6 +24,8 @@ class Puzzle < ApplicationRecord
   validates :title, presence: true, uniqueness: true
   validates :description, :creator_id, :expected_output, presence: true
 
+  scope :recent, -> { order(created_at: :desc) }
+
   private
 
   def format_expected_output

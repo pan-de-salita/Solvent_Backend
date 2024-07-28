@@ -23,6 +23,8 @@ class Solution < ApplicationRecord
   validates :source_code, :language_id, :puzzle_id, :user_id, presence: true
   validate :compare_output
 
+  scope :by_user, ->(user_id) { where(user_id:).order(created_at: :desc) }
+
   private
 
   def compare_output

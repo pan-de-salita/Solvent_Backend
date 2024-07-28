@@ -104,7 +104,7 @@ module Api
       end
 
       def filter_solutions_by_user(user_id)
-        user_id ? Solution.where(user_id:).order(created_at: :desc) : Solution.all
+        user_id ? Solution.by_user(user_id) : Solution.all
       end
     end
   end

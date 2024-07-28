@@ -8,7 +8,7 @@ module Api
 
       # GET api/v1/puzzles
       def index
-        puzzles = Puzzle.all
+        puzzles = Puzzle.recent
 
         render json: {
           status: { code: 200, message: 'Got all puzzles successfully.' },

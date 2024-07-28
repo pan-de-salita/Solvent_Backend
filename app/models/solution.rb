@@ -31,7 +31,7 @@ class Solution < ApplicationRecord
     evaluation = Judge0::Client.evaluate_source_code(source_code:, language_id:)
     return if evaluation[:status] == 200 && evaluation[:data]['stdout'] == puzzle.expected_output
 
-    errors.add(:source_code,
-               "yielded the wrong output. stdout: #{evaluation[:data]['stdout'] || 'nil'}. stderr: #{evaluation[:data]['stderr']}")
+    error_message = "yielded the wrong output. stdout: #{evaluation[:data]['stdout'] || 'nil'}. stderr: #{evaluation[:data]['stderr']}"
+    errors.add(:source_code, error_message)
   end
 end

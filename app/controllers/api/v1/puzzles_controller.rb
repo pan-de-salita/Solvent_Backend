@@ -8,7 +8,7 @@ module Api
 
       # GET api/v1/puzzles
       def index
-        puzzles = Puzzle.recent
+        puzzles = Puzzle.recent.includes(:creator, :solutions)
 
         render json: {
           status: { code: 200, message: 'Got all puzzles successfully.' },
@@ -92,7 +92,7 @@ module Api
       private
 
       def set_puzzle
-        @puzzle = Puzzle.find(params[:id])
+        @puzzle = Puzzle.find(params[:id]).includes(:creator, :solutions)
       rescue ActiveRecord::RecordNotFound => e
         render json: {
           status: { code: 404, message: e }

@@ -101,9 +101,6 @@ module Api
 
       # GET api/v1/completed_solutions
       def completed_solutions
-        p 'AAAAAAAAAAAAAAAAAa'
-        p current_user
-        p 'AAAAAAAAAAAAAAAAAAA'
         solutions = current_user.solutions
 
         render json: {

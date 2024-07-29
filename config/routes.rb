@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get '/current_user', to: 'current_user#index'
+      resources :users, only: :show
       resources :languages, only: %i[index show]
       resources :puzzles do
         resources :solutions

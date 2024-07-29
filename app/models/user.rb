@@ -22,6 +22,7 @@ class User < ApplicationRecord
 
   has_many :puzzles, foreign_key: :creator_id, dependent: :destroy
   has_many :solutions, dependent: :destroy
+  has_many :solved_solutions, through: :solutions, source: :puzzle
   has_many :languages, through: :solutions
   has_many :active_relationships, class_name: 'Relationship',
                                   foreign_key: 'follower_id',
@@ -42,6 +43,13 @@ class User < ApplicationRecord
   validates :password_confirmation, presence: true, on: :create
   validate :preferred_languages_must_be_an_array_of_language_ids
 
+  scope :by_solved_puzzles, lambda {
+                              select('users.*, COUNT(DISTINCT puzzles.id) AS solved_puzzles_count')
+                                .left_joins(:solutions, :puzzles)
+                                .group('users.id')
+                                .order('solved_puzzles_count DESC')
+                            }
+
   def follow(other_user)
     following << other_user unless self == other_user
   end
@@ -54,6 +62,15 @@ class User < ApplicationRecord
     following.include?(other_user)
   end
 
+  def leaderboard_position
+    User.by_solved_puzzles.index(self) + 1
+  end
+
+  def most_used_language
+    most_used_language_id = language_solution_tally.max[0]
+    Language.find(most_used_language_id)
+  end
+
   private
 
   def preferred_languages_must_be_an_array_of_language_ids
@@ -61,5 +78,9 @@ class User < ApplicationRecord
        preferred_languages.any? { |preferred_language| Language.where(id: preferred_language).empty? }
       errors.add(:preferred_languages, 'must be an array of language_ids')
     end
+  end
+
+  def language_solution_tally
+    solutions.map(&:language_id).tally
   end
 end

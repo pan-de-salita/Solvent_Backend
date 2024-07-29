@@ -10,10 +10,11 @@ module Api
         languages = Language.all
 
         render json: {
-          status: { code: 200, message: 'Got all puzzles successfully.' },
+          status: { code: 200, message: 'Got all languages successfully.' },
           data: {
-            language_count: languages.count,
-            languages: LanguageSerializer.new(languages).serializable_hash[:data].map { |data| data[:attributes] }
+            languages: LanguageSerializer.new(languages)
+                                         .serializable_hash[:data]
+                                         .map { |data| data[:attributes] }
           }
         }, status: :ok
       end
@@ -22,8 +23,9 @@ module Api
       def show
         # Error raised via set_language in case of no id match.
         render json: {
-          status: { code: 200, message: 'Got puzzle successfully.' },
-          data: LanguageSerializer.new(@language).serializable_hash[:data][:attributes]
+          status: { code: 200, message: "Got languge #{@language.name} successfully." },
+          data: { language: LanguageSerializer.new(@language)
+                                              .serializable_hash[:data][:attributes] }
         }, status: :ok
       end
 

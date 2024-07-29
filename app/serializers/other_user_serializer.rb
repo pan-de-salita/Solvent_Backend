@@ -16,9 +16,12 @@ class OtherUserSerializer
     user.puzzles
   end
   attribute :stats do |user|
+    most_used_language_details = user.most_used_language
+    most_used_language = most_used_language_details ? most_used_language_details.name : nil
+
     {
       leaderboard_position: user.leaderboard_position,
-      language_most_used: user.most_used_language.name
+      most_used_language:
     }
   end
 end

@@ -4,7 +4,7 @@ module Api
   module V1
     class SolutionsController < ApplicationController
       before_action :set_puzzle
-      before_action :set_solution, except: %i[index create completed_solutions]
+      before_action :set_solution, except: %i[index create]
       before_action :authenticate_user!
 
       # GET api/v1/puzzles/:puzzle_id/solutions
@@ -13,20 +13,21 @@ module Api
 
         render json: {
           status: { code: 200, message: "Got all solutions to puzzle '#{@puzzle.title}' successfully." },
-          data: {
-            solutions: SolutionSerializer.new(solutions).serializable_hash[:data].map { |data| data[:attributes] }
-          }
+          data: { all_solutions: SolutionSerializer.new(solutions)
+                                                   .serializable_hash[:data]
+                                                   .map { |data| data[:attributes] } }
         }, status: :ok
       end
 
       # POST api/v1/puzzles/:puzzle_id/solutions
       def create
-        solution = @puzzle.solutions.build(solution_params)
+        solution = @puzzle.solutions.build(solution_params.merge({ user_id: current_user.id }))
 
         if solution.save
           render json: {
             status: { code: 201, message: 'Created solution successfully.' },
-            data: SolutionSerializer.new(solution).serializable_hash[:data][:attributes]
+            data: { new_solution: SolutionSerializer.new(solution)
+                                                    .serializable_hash[:data][:attributes] }
           }, status: :created
         else
           render json: {
@@ -54,9 +55,11 @@ module Api
           return
         end
 
+        # Error raised via set_solution in case of no id match.
         render json: {
           status: { code: 200, message: 'Got solution successfully.' },
-          data: SolutionSerializer.new(@solution).serializable_hash[:data][:attributes]
+          data: { solution: SolutionSerializer.new(@solution)
+                                              .serializable_hash[:data][:attributes] }
         }, status: :ok
       end
 
@@ -65,7 +68,8 @@ module Api
         if current_user_is_solution_creator? && @solution.update(solution_params)
           render json: {
             status: { code: 200, message: 'Updated solution successfully.' },
-            data: SolutionSerializer.new(@solution).serializable_hash[:data][:attributes]
+            data: { updated_solution: SolutionSerializer.new(@solution)
+                                                        .serializable_hash[:data][:attributes] }
           }, status: :ok
         else
           render json: {
@@ -86,7 +90,8 @@ module Api
         if current_user_is_solution_creator? && @solution.destroy
           render json: {
             status: { code: 200, message: 'Deleted solution successfully.' },
-            data: { deleted_solution: SolutionSerializer.new(@solution).serializable_hash[:data][:attributes] }
+            data: { deleted_solution: SolutionSerializer.new(@solution)
+                                                        .serializable_hash[:data][:attributes] }
           }, status: :ok
         else
           render json: {

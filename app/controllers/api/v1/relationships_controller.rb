@@ -15,7 +15,8 @@ module Api
 
           render json: {
             status: { code: 201, message: 'Created relationship successfully.' },
-            data: RelationshipSerializer.new(relationship).serializable_hash[:data][:attributes]
+            data: { new_relationship: RelationshipSerializer.new(relationship)
+                                                            .serializable_hash[:data][:attributes] }
           }, status: :created
         else
           render json: {
@@ -36,7 +37,8 @@ module Api
         if current_user.unfollow(@relationship.followed)
           render json: {
             status: { code: 200, message: 'Deleted relationship successfully.' },
-            data: RelationshipSerializer.new(@relationship).serializable_hash[:data][:attributes]
+            data: { deleted_relatinship: RelationshipSerializer.new(@relationship)
+                                                               .serializable_hash[:data][:attributes] }
 
           }, status: :ok
         else

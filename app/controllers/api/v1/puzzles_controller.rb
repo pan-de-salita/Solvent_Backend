@@ -12,9 +12,9 @@ module Api
 
         render json: {
           status: { code: 200, message: 'Got all puzzles successfully.' },
-          data: {
-            puzzles: PuzzleSerializer.new(puzzles).serializable_hash[:data].map { |data| data[:attributes] }
-          }
+          data: { all_puzzles: PuzzleSerializer.new(puzzles)
+                                               .serializable_hash[:data]
+                                               .map { |data| data[:attributes] } }
         }, status: :ok
       end
 
@@ -24,8 +24,9 @@ module Api
 
         if puzzle.save
           render json: {
-            status: { code: 201, message: 'Created puzzle successfully.' },
-            data: PuzzleSerializer.new(puzzle).serializable_hash[:data][:attributes]
+            status: { code: 201, message: "Created puzzle '#{puzzle.title}' successfully." },
+            data: { new_puzzle: PuzzleSerializer.new(puzzle)
+                                                .serializable_hash[:data][:attributes] }
           }, status: :created
         else
           render json: {
@@ -45,8 +46,9 @@ module Api
       def show
         # Error raised via set_puzzle in case of no id match.
         render json: {
-          status: { code: 200, message: 'Got puzzle successfully.' },
-          data: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes]
+          status: { code: 200, message: "Got puzzle '#{@puzzle.title}' successfully." },
+          data: { puzzle: PuzzleSerializer.new(@puzzle)
+                                          .serializable_hash[:data][:attributes] }
         }, status: :ok
       end
 
@@ -54,8 +56,9 @@ module Api
       def update
         if current_user_is_puzzle_creator? && @puzzle.update(puzzle_params)
           render json: {
-            status: { code: 200, message: 'Updated puzzle successfully.' },
-            data: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes]
+            status: { code: 200, message: "Updated puzzle '#{puzzle.title}' successfully." },
+            data: { updated_puzzle: PuzzleSerializer.new(@puzzle)
+                                                    .serializable_hash[:data][:attributes] }
           }, status: :ok
         else
           render json: {
@@ -75,8 +78,9 @@ module Api
       def destroy
         if current_user_is_puzzle_creator? && @puzzle.destroy
           render json: {
-            status: { code: 200, message: 'Deleted puzzle successfully.' },
-            data: { deleted_puzzle: PuzzleSerializer.new(@puzzle).serializable_hash[:data][:attributes] }
+            status: { code: 200, message: "Deleted puzzle '#{@puzzle.title}' successfully." },
+            data: { deleted_puzzle: PuzzleSerializer.new(@puzzle)
+                                                    .serializable_hash[:data][:attributes] }
           }, status: :ok
         else
           render json: {

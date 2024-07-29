@@ -10,8 +10,9 @@ module Api
         user = User.includes(:following, :followers, :languages, :puzzles, :solutions).find(current_user.id)
 
         render json: {
-          status: { code: 200, message: "Got all of #{current_user.username}'s followers successfully." },
-          data: UserSerializer.new(user).serializable_hash[:data][:attributes]
+          status: { code: 200, message: "Got user #{user.username} successfully." },
+          data: { current_user: UserSerializer.new(user)
+                                              .serializable_hash[:data][:attributes] }
         }, status: :ok
       end
 
@@ -19,7 +20,11 @@ module Api
       def followers
         render json: {
           status: { code: 200, message: "Got all of #{current_user.username}'s followers successfully." },
-          data: { followers: current_users.followers }
+          data: { current_user_followers: FollowSerializer.new(current_user.followers)
+                                                          .serializable_hash[:data]
+                                                          .map do |data|
+                                            data[:attributes]
+                                          end }
         }, status: :ok
       end
 
@@ -27,7 +32,11 @@ module Api
       def following
         render json: {
           status: { code: 200, message: "Got all of #{current_user.username}'s following successfully." },
-          data: { following: current_users.following }
+          data: { current_user_following: FollowSerializer.new(current_user.following)
+                                                          .serializable_hash[:data]
+                                                          .map do |data|
+                                            data[:attributes]
+                                          end }
         }, status: :ok
       end
 
@@ -37,11 +46,11 @@ module Api
 
         render json: {
           status: { code: 200, message: "Got all of #{current_user.username}'s completed solutions successfully." },
-          data: {
-            solutions: SolutionSerializer.new(solutions).serializable_hash[:data].map do |data|
-                         data[:attributes]
-                       end
-          }
+          data: { current_user_completed_solutions: SolutionSerializer.new(solutions)
+                                                                      .serializable_hash[:data]
+                                                                      .map do |data|
+                                                      data[:attributes]
+                                                    end }
         }, status: :ok
       end
 
@@ -51,11 +60,11 @@ module Api
 
         render json: {
           status: { code: 200, message: "Got all of #{current_user.username}'s created puzzles successfully." },
-          data: {
-            solutions: PuzzleSerializer.new(puzzles).serializable_hash[:data].map do |data|
-                         data[:attributes]
-                       end
-          }
+          data: { current_user_created_puzzles: PuzzleSerializer.new(puzzles)
+                                                                .serializable_hash[:data]
+                                                                .map do |data|
+                                                  data[:attributes]
+                                                end }
         }, status: :ok
       end
 
@@ -65,11 +74,11 @@ module Api
 
         render json: {
           status: { code: 200, message: "Got all of #{current_user.username}'s solved_puzzles successfully." },
-          data: {
-            solutions: PuzzleSerializer.new(puzzles).serializable_hash[:data].map do |data|
-                         data[:attributes]
-                       end
-          }
+          data: { current_user_solved_puzzles: PuzzleSerializer.new(puzzles)
+                                                               .serializable_hash[:data]
+                                                               .map do |data|
+                                                 data[:attributes]
+                                               end }
         }, status: :ok
       end
     end

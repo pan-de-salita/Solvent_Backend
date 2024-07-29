@@ -38,9 +38,12 @@ class UserSerializer
     user.solutions.map(&:puzzle).uniq
   end
   attribute :stats do |user|
+    most_used_language_details = user.most_used_language
+    most_used_language = most_used_language_details ? most_used_language_details.name : nil
+
     {
       leaderboard_position: user.leaderboard_position,
-      most_used_language: user.most_used_language.name
+      most_used_language:
     }
   end
 end

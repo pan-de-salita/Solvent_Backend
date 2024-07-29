@@ -22,7 +22,7 @@ class User < ApplicationRecord
 
   has_many :puzzles, foreign_key: :creator_id, dependent: :destroy
   has_many :solutions, dependent: :destroy
-  has_many :solved_solutions, through: :solutions, source: :puzzle
+  has_many :puzzles_solved, through: :solutions, source: :puzzle
   has_many :languages, through: :solutions
   has_many :active_relationships, class_name: 'Relationship',
                                   foreign_key: 'follower_id',

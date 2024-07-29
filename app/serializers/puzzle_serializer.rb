@@ -16,8 +16,6 @@ class PuzzleSerializer
 
   attributes :id, :title, :description, :expected_output, :creator, :tags, :created_at, :updated_at, :solutions
 
-  has_many :solutions
-
   attribute :creator do |puzzle|
     creator = puzzle.creator
     {

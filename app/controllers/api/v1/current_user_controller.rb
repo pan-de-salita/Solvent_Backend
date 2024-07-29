@@ -7,7 +7,9 @@ module Api
 
       # GET api/v1/current_user
       def index
-        render json: UserSerializer.new(current_user).serializable_hash[:data][:attributes], status: :ok
+        user = User.includes(:following, :followers, :languages, :puzzles, :solutions).find(current_user.id)
+
+        render json: UserSerializer.new(user).serializable_hash[:data][:attributes], status: :ok
       end
     end
   end

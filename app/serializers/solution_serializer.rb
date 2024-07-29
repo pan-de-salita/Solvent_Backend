@@ -13,7 +13,4 @@
 class SolutionSerializer
   include JSONAPI::Serializer
   attributes :id, :source_code, :user_id, :language, :puzzle
-
-  belongs_to :puzzle
-  belongs_to :language
 end

@@ -18,7 +18,8 @@ class Puzzle < ApplicationRecord
   has_many :users, through: :solutions
 
   # TODO:
-  has_many :puzzle_favorites, dependent: :destroy
+  # has_many :puzzle_favorites, dependent: :destroy
+
   belongs_to :creator, class_name: 'User'
 
   before_validation :format_expected_output

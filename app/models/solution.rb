@@ -12,8 +12,10 @@
 #
 class Solution < ApplicationRecord
   has_many :solution_likes, dependent: :destroy
-  has_many :likes, through: :solution_likes, source: :user
-  has_many :comments, dependent: :destroy
+
+  # TODO:
+  # has_many :likes, through: :solution_likes, source: :user
+  # has_many :comments, dependent: :destroy
 
   belongs_to :puzzle
   belongs_to :user

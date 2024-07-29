@@ -1,12 +1,12 @@
 class OtherUserSerializer
   include JSONAPI::Serializer
-  attributes :id, :username, :email, :preferred_languages, :created_at, :updated_at, :following, :followers,
+  attributes :id, :username, :email, :preferred_languages, :created_at, :updated_at, :following_count, :followers_count,
              :puzzles_solved, :puzzles_created, :languages_used, :stats
 
-  attribute :following do |user|
+  attribute :following_count do |user|
     user.following.count
   end
-  attribute :followers do |user|
+  attribute :followers_count do |user|
     user.followers.count
   end
   attribute :languages_used do |user|

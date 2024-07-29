@@ -16,5 +16,12 @@
 #
 class UserSerializer
   include JSONAPI::Serializer
-  attributes :id, :username, :email, :preferred_languages, :created_at, :updated_at
+  attributes :id, :username, :email, :preferred_languages, :created_at, :updated_at, :following, :followers
+
+  attribute :following do |user|
+    user.following.map(&:id)
+  end
+  attribute :followers do |user|
+    user.followers.map(&:id)
+  end
 end

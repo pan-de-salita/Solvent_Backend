@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   api_version = 1
 
   devise_for :users,
-             path: "api/v#{api_version}/auth",
+             path: "api/v#{api_version}",
              only: %i[sessions registrations],
              path_names: {
                # Session paths:

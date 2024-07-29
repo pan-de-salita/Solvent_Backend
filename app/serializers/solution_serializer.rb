@@ -12,11 +12,8 @@
 #
 class SolutionSerializer
   include JSONAPI::Serializer
-  attributes :id, :source_code, :language, :language_id, :user_id, :puzzle
+  attributes :id, :source_code, :user_id, :language, :puzzle
 
   belongs_to :puzzle
-
-  attribute :language do |solution|
-    solution.language.name
-  end
+  belongs_to :language
 end

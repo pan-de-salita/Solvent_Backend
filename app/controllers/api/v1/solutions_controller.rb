@@ -3,15 +3,16 @@
 module Api
   module V1
     class SolutionsController < ApplicationController
-      before_action :set_solution, except: %i[index create]
+      before_action :set_puzzle, except: :completed_solutions
+      before_action :set_solution, except: %i[index create completed_solutions]
       before_action :authenticate_user!
 
-      # GET api/v1/solutions
+      # GET api/v1/puzzles/:puzzle_id/solutions
       def index
-        solutions = current_user.solutions
+        solutions = @puzzle.solutions.where(user: current_user)
 
         render json: {
-          status: { code: 200, message: 'Got all solutions successfully.' },
+          status: { code: 200, message: "Got all solutions to puzzle '#{@puzzle.title}' successfully." },
           data: {
             solution_count: solutions.count,
             solutions: SolutionSerializer.new(solutions).serializable_hash[:data].map { |data| data[:attributes] }
@@ -19,9 +20,9 @@ module Api
         }, status: :ok
       end
 
-      # POST api/v1/solutions
+      # POST api/v1/puzzles/:puzzle_id/solutions
       def create
-        solution = Solution.new(solution_params)
+        solution = @puzzle.solutions.build(solution_params)
 
         if solution.save
           render json: {
@@ -42,18 +43,25 @@ module Api
         }, status: :bad_request
       end
 
-      # GET api/v1/solutions/:id
+      # GET api/v1/puzzles/:puzzle_id/solutions/:id
       def show
-        return unless current_user_is_solution_creator?
+        unless current_user_is_solution_creator?
+          render json: {
+            status: {
+              code: 403,
+              message: 'You are not authorized to view this solution.'
+            }
+          }, status: :forbidden
+          return
+        end
 
-        # Error raised via set_solution in case of no id match.
         render json: {
           status: { code: 200, message: 'Got solution successfully.' },
           data: SolutionSerializer.new(@solution).serializable_hash[:data][:attributes]
         }, status: :ok
       end
 
-      # PATCH/PUT api/v1/solutions/:id
+      # PATCH/PUT api/v1/puzzles/:puzzle_id/solutions/:id
       def update
         if current_user_is_solution_creator? && @solution.update(solution_params)
           render json: {
@@ -74,7 +82,7 @@ module Api
         }, status: :bad_request
       end
 
-      # DELETE api/v1/solutions/:id
+      # DELETE api/v1/puzzles/:puzzles_id/solutions/:id
       def destroy
         if current_user_is_solution_creator? && @solution.destroy
           render json: {
@@ -91,10 +99,36 @@ module Api
         end
       end
 
+      # GET api/v1/completed_solutions
+      def completed_solutions
+        p 'AAAAAAAAAAAAAAAAAa'
+        p current_user
+        p 'AAAAAAAAAAAAAAAAAAA'
+        solutions = current_user.solutions
+
+        render json: {
+          status: { code: 200, message: 'Got all solutions successfully.' },
+          data: {
+            solution_count: solutions.count,
+            solutions: SolutionSerializer.new(solutions).serializable_hash[:data].map do |data|
+                         data[:attributes]
+                       end
+          }
+        }, status: :ok
+      end
+
       private
 
+      def set_puzzle
+        @puzzle = Puzzle.includes(:creator, :solutions).find(params[:puzzle_id])
+      rescue ActiveRecord::RecordNotFound => e
+        render json: {
+          status: { code: 404, message: e.message }
+        }, status: :not_found
+      end
+
       def set_solution
-        @solution = current_user.solutions.where(id: params[:id])
+        @solution = @puzzle.solutions.find(params[:id])
       rescue ActiveRecord::RecordNotFound => e
         render json: {
           status: { code: 404, message: e }
@@ -102,7 +136,7 @@ module Api
       end
 
       def solution_params
-        params.require(:solution).permit :source_code, :language_id, :puzzle_id, :user_id
+        params.require(:solution).permit :source_code, :language_id
       end
 
       def current_user_is_solution_creator?

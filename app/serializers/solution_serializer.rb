@@ -12,19 +12,11 @@
 #
 class SolutionSerializer
   include JSONAPI::Serializer
-  attributes :id, :source_code, :output, :language, :language_id, :puzzle_title, :puzzle_description, :puzzle_id,
-             :user_id
+  attributes :id, :source_code, :language, :language_id, :user_id, :puzzle
+
+  belongs_to :puzzle
 
   attribute :language do |solution|
     solution.language.name
-  end
-  attribute :output do |solution|
-    solution.puzzle.expected_output
-  end
-  attribute :puzzle_title do |solution|
-    solution.puzzle.title
-  end
-  attribute :puzzle_description do |solution|
-    solution.puzzle.description
   end
 end

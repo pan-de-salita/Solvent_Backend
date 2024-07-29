@@ -17,9 +17,15 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get '/auth/current_user', to: 'current_user#index'
+
       resources :languages, only: %i[index show]
-      resources :puzzles
-      resources :solutions
+
+      resources :puzzles do
+        resources :solutions
+      end
+
+      get 'completed_solutions', to: 'solutions#completed_solutions'
+
       resources :relationships, only: %i[create destroy]
     end
   end

@@ -17,12 +17,16 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get '/current_user', to: 'current_user#index'
+      get '/current_user/followers', to: 'current_user#followers'
+      get '/current_user/following', to: 'current_user#following'
+      get '/current_user/completed_solutions', to: 'current_user#completed_solutions'
+      get '/current_user/solved_puzzles', to: 'current_user#solved_puzzles'
+      get '/current_user/created_puzzles', to: 'current_user#created_puzzles'
       resources :users, only: :show
       resources :languages, only: %i[index show]
       resources :puzzles do
         resources :solutions
       end
-      get 'completed_solutions', to: 'solutions#completed_solutions'
       resources :relationships, only: %i[create destroy]
     end
   end

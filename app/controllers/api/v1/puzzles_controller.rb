@@ -13,7 +13,6 @@ module Api
         render json: {
           status: { code: 200, message: 'Got all puzzles successfully.' },
           data: {
-            puzzle_count: puzzles.count,
             puzzles: PuzzleSerializer.new(puzzles).serializable_hash[:data].map { |data| data[:attributes] }
           }
         }, status: :ok

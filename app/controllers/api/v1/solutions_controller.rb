@@ -3,7 +3,7 @@
 module Api
   module V1
     class SolutionsController < ApplicationController
-      before_action :set_puzzle, except: :completed_solutions
+      before_action :set_puzzle
       before_action :set_solution, except: %i[index create completed_solutions]
       before_action :authenticate_user!
 
@@ -14,7 +14,6 @@ module Api
         render json: {
           status: { code: 200, message: "Got all solutions to puzzle '#{@puzzle.title}' successfully." },
           data: {
-            solution_count: solutions.count,
             solutions: SolutionSerializer.new(solutions).serializable_hash[:data].map { |data| data[:attributes] }
           }
         }, status: :ok
@@ -97,21 +96,6 @@ module Api
             }
           }, status: :unprocessable_entity
         end
-      end
-
-      # GET api/v1/completed_solutions
-      def completed_solutions
-        solutions = current_user.solutions
-
-        render json: {
-          status: { code: 200, message: 'Got all solutions successfully.' },
-          data: {
-            solution_count: solutions.count,
-            solutions: SolutionSerializer.new(solutions).serializable_hash[:data].map do |data|
-                         data[:attributes]
-                       end
-          }
-        }, status: :ok
       end
 
       private

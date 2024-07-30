@@ -119,7 +119,7 @@ module Api
       private
 
       def set_puzzle
-        @puzzle = current_user.puzzles.find(params[:id])
+        @puzzle = current_user.puzzles.find(params[:id]) if current_user
       rescue ActiveRecord::RecordNotFound => e
         render json: {
           status: { code: 404, message: e }

@@ -8,7 +8,8 @@ RSpec.describe 'CurrentUsers', type: :request do
     it 'returns http success' do
       headers = { 'Accept' => 'application/json', 'Content-Type' => 'application/json' }
       auth_headers = Devise::JWT::TestHelpers.auth_headers(headers, user)
-      get '/api/v1/auth/current_user', headers: auth_headers
+      get '/api/v1/current_user', headers: auth_headers
+
       expect(response).to have_http_status(:success)
     end
   end

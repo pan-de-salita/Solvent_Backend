@@ -21,6 +21,8 @@ class Solution < ApplicationRecord
   belongs_to :user
   belongs_to :language
 
+  before_validation :strip_source_code
+
   validates :source_code, :language_id, :puzzle_id, :user_id, presence: true
   validate :source_code_yields_expected_output
 
@@ -42,5 +44,9 @@ class Solution < ApplicationRecord
 
     error_message = "yielded the incorrect output. stdout: #{evaluation[:data]['stdout'] || 'nil'}. stderr: #{evaluation[:data]['stderr']}"
     errors.add(:source_code, error_message)
+  end
+
+  def strip_source_code
+    self.source_code = source_code.strip
   end
 end

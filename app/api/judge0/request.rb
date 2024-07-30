@@ -12,7 +12,7 @@ module Judge0
     faraday.request :json
     faraday.response :json
     faraday.response :raise_error
-    # faraday.response :logger
+    faraday.response :logger
   end
 
   class Request

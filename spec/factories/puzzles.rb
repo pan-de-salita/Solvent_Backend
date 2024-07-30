@@ -13,8 +13,8 @@
 #
 FactoryBot.define do
   factory :puzzle do
-    title { 'Test Challenge' }
-    description { 'Description for Test Challenge' }
-    expected_output { 'Expected output for Test Challenge' }
+    sequence(:title) { |n| "Test Challenge #{n}" }
+    sequence(:description) { |n| "Description for Test Challenge #{n}" }
+    sequence(:expected_output) { |n| "Expected output for Test Challenge #{n}" }
   end
 end

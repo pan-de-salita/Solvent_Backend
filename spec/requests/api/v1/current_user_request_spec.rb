@@ -1,21 +1,17 @@
 require 'rails_helper'
 require 'devise/jwt/test_helpers'
 
-RSpec.describe Api::V1::CurrentUserController, type: :controller do
-  include Devise::Test::ControllerHelpers
-
+RSpec.describe 'CurrentUser Requests', type: :request do
   let!(:user_one) { create :user }
   let!(:user_two) { create :user }
   let!(:language) { create :language, name: 'Ruby', id: 72 }
   let(:puzzle) { create(:puzzle, creator_id: user_one.id, expected_output: 'expected_output') }
-  let(:headers) { { 'Accept' => 'application/json', 'Content-Type' => 'application/json' } }
+  let!(:headers) { { 'Accept' => 'application/json', 'Content-Type' => 'application/json' } }
 
-  describe 'GET api/v1/current_user' do
+  describe 'GET /api/v1/current_user' do
     it 'returns the current_user' do
       auth_headers = Devise::JWT::TestHelpers.auth_headers(headers, user_one)
-      request.headers.merge!(auth_headers)
-
-      get :index
+      get '/api/v1/current_user', headers: auth_headers
       response_data = JSON.parse(response.body)['data']
       expect(response).to have_http_status(:success)
       expect(response_data['current_user']).to be_kind_of(Hash)
@@ -23,7 +19,7 @@ RSpec.describe Api::V1::CurrentUserController, type: :controller do
     end
   end
 
-  describe 'GET api/v1/current_user/followers' do
+  describe 'GET /api/v1/current_user/followers' do
     it "returns all of current_user's followers" do
       expect { user_two.follow(user_one) }
         .to change { user_one.followers.count }
@@ -31,16 +27,14 @@ RSpec.describe Api::V1::CurrentUserController, type: :controller do
         .to(1)
 
       auth_headers = Devise::JWT::TestHelpers.auth_headers(headers, user_one)
-      request.headers.merge!(auth_headers)
-
-      get :followers
+      get '/api/v1/current_user/followers', headers: auth_headers
       response_data = JSON.parse(response.body)['data']
       expect(response).to have_http_status(:success)
       expect(response_data['current_user_followers'].first['id']).to eq(user_one.followers.first.id)
     end
   end
 
-  describe 'GET api/v1/current_user/following' do
+  describe 'GET /api/v1/current_user/following' do
     it "returns current_user's following" do
       expect { user_two.follow(user_one) }
         .to change { user_two.following.count }
@@ -48,16 +42,14 @@ RSpec.describe Api::V1::CurrentUserController, type: :controller do
         .to(1)
 
       auth_headers = Devise::JWT::TestHelpers.auth_headers(headers, user_two)
-      request.headers.merge!(auth_headers)
-
-      get :following
+      get '/api/v1/current_user/following', headers: auth_headers
       response_data = JSON.parse(response.body)['data']
       expect(response).to have_http_status(:success)
       expect(response_data['current_user_following'].first['id']).to eq(user_two.following.first.id)
     end
   end
 
-  describe 'GET api/v1/current_user/created_puzzles' do
+  describe 'GET /api/v1/current_user/created_puzzles' do
     it "returns current_user's created puzzles" do
       expect { puzzle }
         .to change { user_one.puzzles.count }
@@ -65,9 +57,7 @@ RSpec.describe Api::V1::CurrentUserController, type: :controller do
         .to(1)
 
       auth_headers = Devise::JWT::TestHelpers.auth_headers(headers, user_one)
-      request.headers.merge!(auth_headers)
-
-      get :created_puzzles
+      get '/api/v1/current_user/created_puzzles', headers: auth_headers
       response_data = JSON.parse(response.body)['data']
       expect(response).to have_http_status(:success)
       expect(response_data['current_user_created_puzzles'].first['id']).to eq(user_one.puzzles.first.id)
@@ -87,32 +77,25 @@ RSpec.describe Api::V1::CurrentUserController, type: :controller do
                        stdout: 'expected_output\n'
                      }
                    })
-    end
-
-    before do
       @puzzle_solver = create :user
       @puzzle_solver.solutions.create(source_code: 'p expected_output', language_id: language.id, puzzle_id: puzzle.id,
                                       user_id: user_one.id)
     end
 
-    describe 'GET api/v1/current_user/completed_solutions' do
+    describe 'GET /api/v1/current_user/completed_solutions' do
       it "returns current_user's completed_solutions" do
         auth_headers = Devise::JWT::TestHelpers.auth_headers(headers, @puzzle_solver)
-        request.headers.merge!(auth_headers)
-
-        get :completed_solutions
+        get '/api/v1/current_user/completed_solutions', headers: auth_headers
         response_data = JSON.parse(response.body)['data']
         expect(response).to have_http_status(:success)
         expect(response_data['current_user_completed_solutions'].first['id']).to eq(@puzzle_solver.solutions.first.id)
       end
     end
 
-    describe 'GET api/v1/current_user/solved_puzzles' do
+    describe 'GET /api/v1/current_user/solved_puzzles' do
       it "returns current_user's solved_puzzles" do
         auth_headers = Devise::JWT::TestHelpers.auth_headers(headers, @puzzle_solver)
-        request.headers.merge!(auth_headers)
-
-        get :solved_puzzles
+        get '/api/v1/current_user/solved_puzzles', headers: auth_headers
         response_data = JSON.parse(response.body)['data']
         expect(response).to have_http_status(:success)
         expect(response_data['current_user_solved_puzzles'].first['id']).to eq(@puzzle_solver.solutions.map(&:puzzle).uniq.first.id)

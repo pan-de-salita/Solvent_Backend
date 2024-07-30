@@ -32,7 +32,6 @@ class Puzzle < ApplicationRecord
   private
 
   def format_expected_output
-    current_expected_output_chars = expected_output.chars
-    self.expected_output = "#{expected_output}\n" if current_expected_output_chars.last(2).join('') != '\n'
+    self.expected_output = "#{expected_output}\n" unless expected_output.end_with?("\n")
   end
 end

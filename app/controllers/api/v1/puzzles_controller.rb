@@ -3,7 +3,7 @@
 module Api
   module V1
     class PuzzlesController < ApplicationController
-      before_action :set_puzzle, except: %i[index create]
+      before_action :set_puzzle, except: %i[index create show]
       before_action :authenticate_user!, except: %i[index show]
 
       # GET api/v1/puzzles
@@ -20,7 +20,7 @@ module Api
 
       # POST api/v1/puzzles
       def create
-        puzzle = Puzzle.new(puzzle_params)
+        puzzle = current_user.puzzles.new(puzzle_params)
 
         if puzzle.save
           render json: {
@@ -44,19 +44,43 @@ module Api
 
       # GET api/v1/puzzles/:id
       def show
-        # Error raised via set_puzzle in case of no id match.
-        render json: {
-          status: { code: 200, message: "Got puzzle '#{@puzzle.title}' successfully." },
-          data: { puzzle: PuzzleSerializer.new(@puzzle)
-                                          .serializable_hash[:data][:attributes] }
-        }, status: :ok
+        puzzle = Puzzle.find(params[:id])
+
+        if puzzle
+          if current_user
+            render json: {
+              status: { code: 200, message: "Got puzzle '#{puzzle.title}' successfully." },
+              data: { puzzle: PuzzleSerializer.new(puzzle)
+                                              .serializable_hash[:data][:attributes] }
+            }, status: :ok
+          else
+            puzzle_hash = PuzzleSerializer.new(puzzle)
+                                          .serializable_hash[:data][:attributes]
+                                          .reject do |attr|
+              attr == :solutions
+            end
+
+            render json: {
+              status: { code: 200, message: "Got puzzle '#{puzzle.title}' successfully." },
+              data: { puzzle: puzzle_hash }
+            }, status: :ok
+          end
+        else
+          render json: {
+            status: {
+              code: 404,
+              message: "Puzzle with id #{params[:id]} couldn't be found."
+            }
+          }, status: :not_found
+
+        end
       end
 
       # PATCH/PUT api/v1/puzzles/:id
       def update
-        if current_user_is_puzzle_creator? && @puzzle.update(puzzle_params)
+        if @puzzle.update(puzzle_params)
           render json: {
-            status: { code: 200, message: "Updated puzzle '#{puzzle.title}' successfully." },
+            status: { code: 200, message: "Updated puzzle '#{@puzzle.title}' successfully." },
             data: { updated_puzzle: PuzzleSerializer.new(@puzzle)
                                                     .serializable_hash[:data][:attributes] }
           }, status: :ok
@@ -76,7 +100,7 @@ module Api
 
       # DELETE api/v1/puzzles/:id
       def destroy
-        if current_user_is_puzzle_creator? && @puzzle.destroy
+        if @puzzle.destroy
           render json: {
             status: { code: 200, message: "Deleted puzzle '#{@puzzle.title}' successfully." },
             data: { deleted_puzzle: PuzzleSerializer.new(@puzzle)
@@ -95,7 +119,7 @@ module Api
       private
 
       def set_puzzle
-        @puzzle = Puzzle.includes(:creator, :solutions).find(params[:id])
+        @puzzle = current_user.puzzles.find(params[:id])
       rescue ActiveRecord::RecordNotFound => e
         render json: {
           status: { code: 404, message: e }
@@ -103,11 +127,7 @@ module Api
       end
 
       def puzzle_params
-        params.require(:puzzle).permit :title, :description, :creator_id, :expected_output
-      end
-
-      def current_user_is_puzzle_creator?
-        @puzzle.creator == current_user
+        params.require(:puzzle).permit :title, :description, :expected_output
       end
     end
   end

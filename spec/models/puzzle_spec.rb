@@ -21,8 +21,9 @@ RSpec.describe Puzzle, type: :model do
   let(:puzzle) { build :puzzle, creator_id: user.id }
 
   context 'when attributes are valid' do
-    it 'creates a Puzzle instance' do
+    it 'creates a Puzzle instance with its expected output containing a new-line character at the end' do
       expect(puzzle).to be_valid
+      expect(puzzle.expected_output).to end_with("\n")
     end
   end
 

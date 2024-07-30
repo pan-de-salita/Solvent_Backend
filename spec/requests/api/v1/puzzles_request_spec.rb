@@ -121,7 +121,7 @@ RSpec.describe 'Puzzle Requests', type: :request do
       end
     end
 
-    describe 'PATCH /api/v1/puzzles' do
+    describe 'PATCH /api/v1/puzzles/:id' do
       it 'rejects the update of the specified puzzle' do
         puzzle_to_update = create :puzzle, creator_id: user.id, expected_output: 'Update me.'
         expect(Puzzle.all.count).to eq(4)
@@ -140,7 +140,7 @@ RSpec.describe 'Puzzle Requests', type: :request do
       end
     end
 
-    describe 'DELETE /api/v1/puzzles' do
+    describe 'DELETE /api/v1/puzzles/:id' do
       it 'rejects the deletion of the specified puzzle' do
         puzzle_to_delete = create :puzzle, creator_id: user.id
         expect(Puzzle.all.count).to eq(4)

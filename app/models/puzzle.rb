@@ -32,6 +32,6 @@ class Puzzle < ApplicationRecord
   private
 
   def format_expected_output
-    self.expected_output = "#{expected_output}\n" unless expected_output.end_with?("\n")
+    self.expected_output = "#{expected_output.strip}\n" unless expected_output.end_with?("\n")
   end
 end

@@ -29,6 +29,10 @@ class Puzzle < ApplicationRecord
 
   scope :recent, -> { order(created_at: :desc) }
 
+  def solutions_by_languages
+    solutions.group_by { |solution| solution.language.name }
+  end
+
   private
 
   def format_expected_output

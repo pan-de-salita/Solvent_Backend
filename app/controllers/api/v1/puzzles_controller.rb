@@ -57,7 +57,7 @@ module Api
             puzzle_hash = PuzzleSerializer.new(puzzle)
                                           .serializable_hash[:data][:attributes]
                                           .reject do |attr|
-              attr == :solutions
+              attr == :solutions_by_languages
             end
 
             render json: {

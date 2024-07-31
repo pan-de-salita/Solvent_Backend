@@ -27,7 +27,7 @@ RSpec.describe 'Puzzle Requests', type: :request do
         expect(response).to have_http_status(:success)
         expect(response_data['puzzle']).to be_kind_of(Hash)
         expect(response_data['puzzle']['id']).to eq(puzzle_one.id)
-        expect(response_data['puzzle']['solutions']).to be_nil
+        expect(response_data['puzzle']['solutions_by_languages']).to be_nil
       end
     end
   end
@@ -44,7 +44,7 @@ RSpec.describe 'Puzzle Requests', type: :request do
         expect(response).to have_http_status(:success)
         expect(response_data['puzzle']).to be_kind_of(Hash)
         expect(response_data['puzzle']['id']).to eq(puzzle_one.id)
-        expect(response_data['puzzle']['solutions']).to be_kind_of(Array)
+        expect(response_data['puzzle']['solutions_by_languages']).to be_kind_of(Hash)
       end
     end
 

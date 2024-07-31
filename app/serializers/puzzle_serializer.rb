@@ -14,7 +14,8 @@
 class PuzzleSerializer
   include JSONAPI::Serializer
 
-  attributes :id, :title, :description, :expected_output, :creator, :tags, :created_at, :updated_at, :solutions
+  attributes :id, :title, :description, :expected_output, :creator, :tags, :created_at, :updated_at,
+             :solutions_by_languages
 
   attribute :creator do |puzzle|
     creator = puzzle.creator
@@ -23,5 +24,8 @@ class PuzzleSerializer
       username: creator.username,
       email: creator.email
     }
+  end
+  attribute :solutions_by_languages do |puzzle|
+    puzzle.solutions_by_languages
   end
 end

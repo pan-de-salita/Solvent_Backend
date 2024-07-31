@@ -1,7 +1,7 @@
 class OtherUserSerializer
   include JSONAPI::Serializer
   attributes :id, :username, :email, :preferred_languages, :created_at, :updated_at, :following_count, :followers_count,
-             :puzzles_solved, :puzzles_created, :languages_used, :stats
+             :solved_puzzles, :puzzles_created, :languages_used, :stats
 
   attribute :following_count do |user|
     user.following.count

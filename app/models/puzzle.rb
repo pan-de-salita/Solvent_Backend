@@ -22,7 +22,7 @@ class Puzzle < ApplicationRecord
 
   belongs_to :creator, class_name: 'User'
 
-  before_validation :format_expected_output
+  # before_validation :format_expected_output
 
   validates :title, presence: true, uniqueness: true
   validates :description, :creator_id, :expected_output, presence: true
@@ -33,9 +33,9 @@ class Puzzle < ApplicationRecord
     solutions.group_by { |solution| solution.language.name }
   end
 
-  private
+  # private
 
-  def format_expected_output
-    self.expected_output = "#{expected_output.strip}\n" unless expected_output.end_with?("\n")
-  end
+  # def format_expected_output
+  #   self.expected_output = "#{expected_output.strip}\n" unless expected_output.end_with?("\n")
+  # end
 end

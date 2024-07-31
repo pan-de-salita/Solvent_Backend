@@ -64,7 +64,6 @@ RSpec.describe 'Puzzle Requests', type: :request do
         expect(response).to have_http_status(:success)
         expect(Puzzle.all.count).to eq(4)
         expect(response_data['new_puzzle']['id']).to eq(Puzzle.recent.first.id)
-        expect(response_data['new_puzzle']['expected_output']).to end_with("\n")
       end
     end
 
@@ -72,7 +71,7 @@ RSpec.describe 'Puzzle Requests', type: :request do
       it 'updates a new puzzle with expected_output containing a new-line character at its end' do
         puzzle_to_update = create :puzzle, creator_id: user.id, expected_output: 'Update me.'
         expect(Puzzle.all.count).to eq(4)
-        expect(puzzle_to_update.expected_output).to eq("Update me.\n")
+        expect(puzzle_to_update.expected_output).to eq('Update me.')
         patch "/api/v1/puzzles/#{puzzle_to_update.id}",
               headers: auth_headers,
               params: {
@@ -83,8 +82,7 @@ RSpec.describe 'Puzzle Requests', type: :request do
         response_data = JSON.parse(response.body)['data']
         expect(response).to have_http_status(:success)
         expect(response_data['updated_puzzle']['id']).to eq(puzzle_to_update.id)
-        expect(response_data['updated_puzzle']['expected_output']).to eq("I've been updated.\n")
-        expect(response_data['updated_puzzle']['expected_output']).to end_with("\n")
+        expect(response_data['updated_puzzle']['expected_output']).to eq("I've been updated.")
       end
     end
 
@@ -125,7 +123,7 @@ RSpec.describe 'Puzzle Requests', type: :request do
       it 'rejects the update of the specified puzzle' do
         puzzle_to_update = create :puzzle, creator_id: user.id, expected_output: 'Update me.'
         expect(Puzzle.all.count).to eq(4)
-        expect(puzzle_to_update.expected_output).to eq("Update me.\n")
+        expect(puzzle_to_update.expected_output).to eq('Update me.')
         patch "/api/v1/puzzles/#{puzzle_to_update.id}",
               headers:,
               params: {
@@ -134,7 +132,7 @@ RSpec.describe 'Puzzle Requests', type: :request do
                 }
               }.to_json
         expect(response).to have_http_status(:unauthorized)
-        expect(puzzle_to_update.expected_output).to eq("Update me.\n")
+        expect(puzzle_to_update.expected_output).to eq('Update me.')
         response_data = JSON.parse(response.body)
         expect(response_data['data']).to be_nil
       end

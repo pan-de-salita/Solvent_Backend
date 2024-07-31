@@ -47,6 +47,6 @@ class Solution < ApplicationRecord
   end
 
   def strip_source_code
-    self.source_code = source_code.strip
+    source_code.strip!
   end
 end

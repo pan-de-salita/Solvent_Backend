@@ -22,7 +22,7 @@ class User < ApplicationRecord
 
   has_many :puzzles, foreign_key: :creator_id, dependent: :destroy
   has_many :solutions, dependent: :destroy
-  has_many :puzzles_solved, through: :solutions, source: :puzzle
+  has_many :solved_puzzles, through: :solutions, source: :puzzle
   has_many :languages, through: :solutions
   has_many :active_relationships, class_name: 'Relationship',
                                   foreign_key: 'follower_id',
@@ -72,6 +72,10 @@ class User < ApplicationRecord
 
     most_used_language_id = language_solution_tally.max[0]
     Language.find(most_used_language_id)
+  end
+
+  def completed_solutions
+    solutions.group_by { |solution| solution.puzzle.title }
   end
 
   private

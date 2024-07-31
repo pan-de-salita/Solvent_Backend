@@ -34,8 +34,8 @@ class Puzzle < ApplicationRecord
     solutions.includes(:language).group_by { |solution| solution.language.name }
   end
 
-  def languages_used
-    languages.uniq.map(&:name)
+  def languages_tally
+    languages.map(&:name).tally
   end
 
   private

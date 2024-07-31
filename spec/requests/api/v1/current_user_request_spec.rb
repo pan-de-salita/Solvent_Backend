@@ -69,7 +69,7 @@ RSpec.describe 'CurrentUser Requests', type: :request do
     before do
       allow(Judge0::Client).to receive(:new).and_return(mock_judge0_client)
       allow(mock_judge0_client).to receive(:evaluate_source_code).with(
-        source_code: 'p expected_output',
+        source_code: 'p "expected_output"',
         language_id: language.id
       ).and_return({
                      status: 200,

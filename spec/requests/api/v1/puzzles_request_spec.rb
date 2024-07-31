@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'devise/jwt/test_helpers'
 
-RSpec.describe 'Puzzle Requests', type: :request do
+RSpec.describe 'Puzzles Requests', type: :request do
   let!(:user) { create :user }
   let!(:language) { create :language, name: 'Ruby', id: 72 }
   let!(:puzzle_one) { create :puzzle, creator_id: user.id }

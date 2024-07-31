@@ -27,6 +27,7 @@ class Solution < ApplicationRecord
   validate :source_code_yields_expected_output
 
   scope :by_user, ->(user_id) { where(user_id:).order(created_at: :desc) }
+  scope :recent, -> { order(created_at: :desc) }
 
   private
 

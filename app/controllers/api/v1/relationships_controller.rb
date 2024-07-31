@@ -6,7 +6,7 @@ module Api
       before_action :authenticate_user!
       before_action :set_relationship, only: :destroy
 
-      # POST api/v1/relationships/:followed_id
+      # POST api/v1/relationships
       def create
         other_user = User.find_by(id: follow_params[:followed_id])
 
@@ -37,8 +37,8 @@ module Api
         if current_user.unfollow(@relationship.followed)
           render json: {
             status: { code: 200, message: 'Deleted relationship successfully.' },
-            data: { deleted_relatinship: RelationshipSerializer.new(@relationship)
-                                                               .serializable_hash[:data][:attributes] }
+            data: { deleted_relationship: RelationshipSerializer.new(@relationship)
+                                                                .serializable_hash[:data][:attributes] }
 
           }, status: :ok
         else

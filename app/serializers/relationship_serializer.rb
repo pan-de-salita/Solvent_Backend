@@ -2,6 +2,20 @@ class RelationshipSerializer
   include JSONAPI::Serializer
   attributes :id, :follower, :followed
 
-  belongs_to :follower, class_name: 'User'
-  belongs_to :followed, class_name: 'User'
+  attribute :follower do |relationship|
+    follower = relationship.follower
+    {
+      id: follower.id,
+      username: follower.username,
+      email: follower.email
+    }
+  end
+  attribute :followed do |relationship|
+    followed = relationship.followed
+    {
+      id: followed.id,
+      username: followed.username,
+      email: followed.email
+    }
+  end
 end

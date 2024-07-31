@@ -70,7 +70,7 @@ module Api
 
       # GET api/v1/current_user/solved_puzzles
       def solved_puzzles
-        puzzles = current_user.solutions.map(&:puzzle).uniq
+        puzzles = current_user.solved_puzzles.uniq
 
         render json: {
           status: { code: 200, message: "Got all of #{current_user.username}'s solved_puzzles successfully." },

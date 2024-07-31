@@ -1,101 +1,170 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'devise/jwt/test_helpers'
 
-RSpec.describe 'Solutions Requests', type: :request do
-  let!(:puzzle_creator) { create :user }
-  let!(:puzzle_solver) { create :user }
-  let!(:language) { create :language, name: 'Ruby', id: 72 }
-  let!(:puzzle) { create :puzzle, creator_id: puzzle_solver.id, expected_output: 'hello world' }
-  let!(:solution) { create :solution, user_id: puzzle_solver.id, puzzle_id: puzzle.id, language_id: language.id }
-  let!(:headers) { { 'Accept' => 'application/json', 'Content-Type' => 'application/json' } }
-  let!(:auth_headers) do
-    Devise::JWT::TestHelpers.auth_headers(headers, puzzle_solver)
-  end
+RSpec.describe 'Solutions API', type: :request do
+  let!(:puzzle_creator) { create(:user) }
+  let!(:puzzle_solver) { create(:user) }
+  let!(:language) { create(:language, name: 'Ruby', id: 72) }
+  let!(:puzzle) { create(:puzzle, creator: puzzle_solver, expected_output: 'hello world') }
+  let!(:solution) { create(:solution, user: puzzle_solver, puzzle:, language:) }
+  let(:headers) { { 'Accept' => 'application/json', 'Content-Type' => 'application/json' } }
+  let(:auth_headers) { Devise::JWT::TestHelpers.auth_headers(headers, puzzle_solver) }
+  let(:puzzle_creator_auth_headers) { Devise::JWT::TestHelpers.auth_headers(headers, puzzle_creator) }
   let(:mock_judge0_client) { double('Judge0 Client') }
+
   before do
     allow(Judge0::Client).to receive(:new).and_return(mock_judge0_client)
     allow(mock_judge0_client).to receive(:evaluate_source_code).with(
-      source_code: 'p "hello world"',
+      source_code: 'puts "hello world"',
       language_id: language.id
-    ).and_return({
-                   status: 200,
-                   data: {
-                     stdout: 'hello world\n'
-                   }
-                 })
+    ).and_return(
+      status: 200,
+      data: {
+        stdout: 'hello world\n'
+      }
+    )
   end
 
-  describe 'GET /api/v1/puzzles/:puzzle_id/solutions' do
-    it 'returns all solutions to the specified puzzle' do
-      expect(Solution.all.count).to eq(1)
-      get("/api/v1/puzzles/#{puzzle.id}/solutions", headers: auth_headers)
-      response_data = JSON.parse(response.body)['data']
-      expect(response).to have_http_status(:success)
-      expect(response_data['all_solutions']).to be_kind_of(Array)
-      expect(response_data['all_solutions'].map do |solution|
-               solution['user_id']
-             end.include?(puzzle_solver.id)).to be_truthy
+  context 'authorized user' do
+    describe 'GET /api/v1/puzzles/:puzzle_id/solutions' do
+      it 'returns all solutions to the specified puzzle' do
+        get "/api/v1/puzzles/#{puzzle.id}/solutions", headers: auth_headers
+        expect(response).to have_http_status(:success)
+        expect(JSON.parse(response.body)['data']['all_solutions'].map { |s| s['user_id'] }).to include(puzzle_solver.id)
+      end
+    end
+
+    describe 'GET /api/v1/puzzles/:puzzle_id/solutions/:id' do
+      it 'returns the specified solution to the specified puzzle' do
+        get "/api/v1/puzzles/#{puzzle.id}/solutions/#{solution.id}", headers: auth_headers
+        expect(response).to have_http_status(:success)
+        expect(JSON.parse(response.body)['data']['solution']['id']).to eq(solution.id)
+      end
+    end
+
+    describe 'POST /api/v1/puzzles/:puzzle_id/solutions' do
+      it 'creates a new solution' do
+        expect do
+          post "/api/v1/puzzles/#{puzzle.id}/solutions",
+               headers: auth_headers,
+               params: {
+                 solution: {
+                   source_code: 'puts "hello world"',
+                   language_id: language.id
+                 }
+               }.to_json
+        end.to change(Solution, :count).by(1)
+        expect(response).to have_http_status(:success)
+        expect(JSON.parse(response.body)['data']['new_solution']['id']).to eq(Solution.recent.first.id)
+      end
+    end
+
+    describe 'PATCH /api/v1/puzzles/:puzzle_id/solutions/:id' do
+      it 'updates the specified solution' do
+        solution_to_update = create(:solution, user: puzzle_solver, puzzle:, language:,
+                                               source_code: 'puts "hello"')
+        patch "/api/v1/puzzles/#{puzzle.id}/solutions/#{solution_to_update.id}",
+              headers: auth_headers,
+              params: {
+                solution: {
+                  source_code: 'puts "hello world"'
+                }
+              }.to_json
+        expect(response).to have_http_status(:success)
+        expect(JSON.parse(response.body)['data']['updated_solution']['source_code']).to eq('puts "hello world"')
+      end
+    end
+
+    describe 'DELETE /api/v1/puzzles/:puzzle_id/solutions/:id' do
+      it 'deletes the specified solution' do
+        solution_to_delete = create(:solution, user: puzzle_solver, puzzle:, language:)
+        expect { delete "/api/v1/puzzles/#{puzzle.id}/solutions/#{solution_to_delete.id}", headers: auth_headers }
+          .to change(Solution, :count).by(-1)
+        expect(response).to have_http_status(:success)
+        expect(JSON.parse(response.body)['data']['deleted_solution']['id']).to eq(solution_to_delete.id)
+      end
     end
   end
 
-  describe 'GET /api/v1/puzzles/:puzzle_id/solutions/:id' do
-    it 'returns the specified solution to the specified puzzle' do
-      expect(Solution.all.count).to eq(1)
-      get("/api/v1/puzzles/#{puzzle.id}/solutions/#{solution.id}", headers: auth_headers)
-      response_data = JSON.parse(response.body)['data']
-      expect(response).to have_http_status(:success)
-      expect(response_data['solution']).to be_kind_of(Hash)
-      expect(response_data['solution']['id']).to eq(solution.id)
+  context 'unauthorized user' do
+    describe 'GET /api/v1/puzzles/:puzzle_id/solutions' do
+      it 'returns an unauthorized status' do
+        get("/api/v1/puzzles/#{puzzle.id}/solutions", headers:)
+        expect(response).to have_http_status(:unauthorized)
+        expect(JSON.parse(response.body)['data']).to be_nil
+      end
     end
-  end
 
-  describe 'POST /api/v1/puzzles/:puzzle_id' do
-    it 'creates a new solution' do
-      expect(Solution.all.count).to eq(1)
-      post "/api/v1/puzzles/#{puzzle.id}/solutions",
-           headers: auth_headers,
-           params: {
-             solution: {
-               source_code: 'p "hello world"',
-               language_id: 72
-             }
-           }.to_json
-      response_data = JSON.parse(response.body)['data']
-      expect(response).to have_http_status(:success)
-      expect(Solution.all.count).to eq(2)
-      expect(response_data['new_solution']['id']).to eq(Solution.recent.first.id)
+    describe 'GET /api/v1/puzzles/:puzzle_id/solutions/:id' do
+      it 'returns an unauthorized status' do
+        get("/api/v1/puzzles/#{puzzle.id}/solutions/#{solution.id}", headers:)
+        expect(response).to have_http_status(:unauthorized)
+        expect(JSON.parse(response.body)['data']).to be_nil
+      end
     end
-  end
 
-  describe 'PATCH /api/v1/puzzles/:puzzle_id/solutions/:id' do
-    it 'updates the specified solution' do
-      solution_to_update = create :solution, user_id: puzzle_solver.id, puzzle_id: puzzle.id, language_id: language.id,
-                                             source_code: 'p "hello world'
-      expect(solution_to_update.source_code).to eq('p "hello world')
-      patch "/api/v1/puzzles/#{puzzle.id}/solutions/#{solution_to_update.id}",
-            headers: auth_headers,
-            params: {
-              solution: {
-                source_code: 'puts "hello world"'
-              }
-            }.to_json
-      response_data = JSON.parse(response.body)['data']
-      expect(response).to have_http_status(:success)
-      expect(response_data['updated_solution']['id']).to eq(solution_to_update.id)
-      expect(response_data['updated_solution']['source_code']).to eq('puts "hello world"')
+    describe 'POST /api/v1/puzzles/:puzzle_id/solutions' do
+      it 'returns an unauthorized status' do
+        expect do
+          post "/api/v1/puzzles/#{puzzle.id}/solutions",
+               headers:,
+               params: {
+                 solution: {
+                   source_code: 'puts "hello world"',
+                   language_id: language.id
+                 }
+               }.to_json
+        end.to change(Solution, :count).by(0)
+        expect(response).to have_http_status(:unauthorized)
+        expect(JSON.parse(response.body)['data']).to be_nil
+      end
     end
-  end
 
-  describe 'DELETE /api/v1/puzzles/:puzzle_id/solutions/:id' do
-    it 'deletes the specified solution' do
-      solution_to_delete = create :solution, user_id: puzzle_solver.id, puzzle_id: puzzle.id, language_id: language.id,
-                                             source_code: 'p "hello world'
-      expect(Solution.all.count).to eq(2)
-      delete "/api/v1/puzzles/#{puzzle.id}/solutions/#{solution_to_delete.id}", headers: auth_headers
-      response_data = JSON.parse(response.body)['data']
-      expect(response).to have_http_status(:success)
-      expect(Solution.all.count).to eq(1)
-      expect(response_data['deleted_solution']['id']).to eq(solution_to_delete.id)
+    describe 'PATCH /api/v1/puzzles/:puzzle_id/solutions/:id' do
+      let(:solution_to_update) do
+        create(:solution, user: puzzle_solver, puzzle:, language:, source_code: 'puts "hello"')
+      end
+
+      it 'returns an unauthorized status (when there is no logged-in user)' do
+        patch "/api/v1/puzzles/#{puzzle.id}/solutions/#{solution_to_update.id}",
+              headers:,
+              params: {
+                solution: {
+                  source_code: 'puts "hello world"'
+                }
+              }.to_json
+        expect(response).to have_http_status(:unauthorized)
+        expect(JSON.parse(response.body)['data']).to be_nil
+        expect(solution_to_update.source_code).to eq('puts "hello"')
+      end
+
+      it 'returns an unauthorized status (when logged-in user is not solutions creator)' do
+        patch "/api/v1/puzzles/#{puzzle.id}/solutions/#{solution_to_update.id}",
+              headers: puzzle_creator_auth_headers,
+              params: {
+                solution: {
+                  source_code: 'puts "hello world"'
+                }
+              }.to_json
+        expect(response).to have_http_status(:unauthorized)
+        expect(JSON.parse(response.body)['data']).to be_nil
+        expect(solution_to_update.source_code).to eq('puts "hello"')
+      end
+    end
+
+    describe 'DELETE /api/v1/puzzles/:puzzle_id/solutions/:id' do
+      it 'returns an unauthorized status' do
+        solution_to_delete = create(:solution, user: puzzle_solver, puzzle:, language:)
+        expect do
+          delete "/api/v1/puzzles/#{puzzle.id}/solutions/#{solution_to_delete.id}",
+                 headers: puzzle_creator_auth_headers
+        end
+          .to change(Solution, :count).by(0)
+        expect(response).to have_http_status(:unauthorized)
+        expect(JSON.parse(response.body)['data']).to be_nil
+      end
     end
   end
 end

@@ -6,6 +6,7 @@ module Api
       before_action :set_puzzle
       before_action :set_solution, except: %i[index create]
       before_action :authenticate_user!
+      before_action :authorize_solution_creator, only: %i[show update destroy]
 
       # GET api/v1/puzzles/:puzzle_id/solutions
       def index
@@ -65,7 +66,7 @@ module Api
 
       # PATCH/PUT api/v1/puzzles/:puzzle_id/solutions/:id
       def update
-        if current_user_is_solution_creator? && @solution.update(solution_params)
+        if @solution.update(solution_params)
           render json: {
             status: { code: 200, message: 'Updated solution successfully.' },
             data: { updated_solution: SolutionSerializer.new(@solution)
@@ -87,7 +88,7 @@ module Api
 
       # DELETE api/v1/puzzles/:puzzles_id/solutions/:id
       def destroy
-        if current_user_is_solution_creator? && @solution.destroy
+        if @solution.destroy
           render json: {
             status: { code: 200, message: 'Deleted solution successfully.' },
             data: { deleted_solution: SolutionSerializer.new(@solution)
@@ -123,6 +124,17 @@ module Api
 
       def solution_params
         params.require(:solution).permit :source_code, :language_id
+      end
+
+      def authorize_solution_creator
+        return if current_user_is_solution_creator?
+
+        render json: {
+          status: {
+            code: 401,
+            message: "You aren't authorized to complete the action."
+          }
+        }, status: :unauthorized
       end
 
       def current_user_is_solution_creator?

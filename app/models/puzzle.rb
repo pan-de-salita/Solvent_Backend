@@ -16,6 +16,7 @@
 class Puzzle < ApplicationRecord
   has_many :solutions, dependent: :destroy
   has_many :users, through: :solutions
+  has_many :languages, through: :solutions
 
   # TODO:
   # has_many :puzzle_favorites, dependent: :destroy
@@ -30,7 +31,11 @@ class Puzzle < ApplicationRecord
   scope :recent, -> { order(created_at: :desc) }
 
   def solutions_by_languages
-    solutions.group_by { |solution| solution.language.name }
+    solutions.includes(:language).group_by { |solution| solution.language.name }
+  end
+
+  def languages_used
+    languages.uniq.map(&:name)
   end
 
   private

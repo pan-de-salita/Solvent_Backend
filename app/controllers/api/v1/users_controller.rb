@@ -9,7 +9,7 @@ module Api
       def show
         # Error raised via set_puzzle in case of no id match.
         render json: {
-          status: { code: 200, message: "Got user #{@user} successfully." },
+          status: { code: 200, message: "Got user #{@user.username} successfully." },
           data: { user: OtherUserSerializer.new(@user).serializable_hash[:data][:attributes] }
         }, status: :ok
       end

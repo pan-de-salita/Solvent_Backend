@@ -67,34 +67,35 @@ RSpec.describe 'Solutions Requests', type: :request do
     end
   end
 
-  # describe 'PATCH /api/v1/puzzles/:id' do
-  #   it 'updates a new puzzle with expected_output containing a new-line character at its end' do
-  #     puzzle_to_update = create :puzzle, creator_id: user.id, expected_output: 'Update me.'
-  #     expect(Puzzle.all.count).to eq(4)
-  #     expect(puzzle_to_update.expected_output).to eq('Update me.')
-  #     patch "/api/v1/puzzles/#{puzzle_to_update.id}",
-  #           headers: auth_headers,
-  #           params: {
-  #             puzzle: {
-  #               expected_output: "I've been updated."
-  #             }
-  #           }.to_json
-  #     response_data = JSON.parse(response.body)['data']
-  #     expect(response).to have_http_status(:success)
-  #     expect(response_data['updated_puzzle']['id']).to eq(puzzle_to_update.id)
-  #     expect(response_data['updated_puzzle']['expected_output']).to eq("I've been updated.")
-  #   end
-  # end
-  #
-  # describe 'DELETE /api/v1/puzzles/:id' do
-  #   it 'deletes the specified puzzle' do
-  #     puzzle_to_delete = create :puzzle, creator_id: user.id
-  #     expect(Puzzle.all.count).to eq(4)
-  #     delete "/api/v1/puzzles/#{puzzle_to_delete.id}", headers: auth_headers
-  #     response_data = JSON.parse(response.body)['data']
-  #     expect(response).to have_http_status(:success)
-  #     expect(Puzzle.all.count).to eq(3)
-  #     expect(response_data['deleted_puzzle']['id']).to eq(puzzle_to_delete.id)
-  #   end
-  # end
+  describe 'PATCH /api/v1/puzzles/:puzzle_id/solutions/:id' do
+    it 'updates the specified solution' do
+      solution_to_update = create :solution, user_id: puzzle_solver.id, puzzle_id: puzzle.id, language_id: language.id,
+                                             source_code: 'p "hello world'
+      expect(solution_to_update.source_code).to eq('p "hello world')
+      patch "/api/v1/puzzles/#{puzzle.id}/solutions/#{solution_to_update.id}",
+            headers: auth_headers,
+            params: {
+              solution: {
+                source_code: 'puts "hello world"'
+              }
+            }.to_json
+      response_data = JSON.parse(response.body)['data']
+      expect(response).to have_http_status(:success)
+      expect(response_data['updated_solution']['id']).to eq(solution_to_update.id)
+      expect(response_data['updated_solution']['source_code']).to eq('puts "hello world"')
+    end
+  end
+
+  describe 'DELETE /api/v1/puzzles/:puzzle_id/solutions/:id' do
+    it 'deletes the specified solution' do
+      solution_to_delete = create :solution, user_id: puzzle_solver.id, puzzle_id: puzzle.id, language_id: language.id,
+                                             source_code: 'p "hello world'
+      expect(Solution.all.count).to eq(2)
+      delete "/api/v1/puzzles/#{puzzle.id}/solutions/#{solution_to_delete.id}", headers: auth_headers
+      response_data = JSON.parse(response.body)['data']
+      expect(response).to have_http_status(:success)
+      expect(Solution.all.count).to eq(1)
+      expect(response_data['deleted_solution']['id']).to eq(solution_to_delete.id)
+    end
+  end
 end

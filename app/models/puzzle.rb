@@ -15,7 +15,7 @@
 #
 class Puzzle < ApplicationRecord
   has_many :solutions, dependent: :destroy
-  has_many :users, through: :solutions
+  has_many :solvers, through: :solutions, source: :user
   has_many :languages, through: :solutions
 
   # TODO:

@@ -8,7 +8,7 @@ module Api
 
       # GET api/v1/puzzles
       def index
-        puzzles = Puzzle.recent.includes(:creator, :solutions, :users)
+        puzzles = Puzzle.recent.includes(:creator, :solutions, :solvers)
 
         render json: {
           status: { code: 200, message: 'Got all puzzles successfully.' },

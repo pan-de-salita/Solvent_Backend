@@ -30,7 +30,7 @@ class PuzzleSerializer
   end
   attribute :stats do |puzzle|
     {
-      solvers: puzzle.users.uniq.count,
+      solvers: puzzle.solvers.uniq.count,
       solutions: puzzle.solutions.count,
       languages: puzzle.languages_tally
     }

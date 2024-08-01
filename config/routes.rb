@@ -25,7 +25,9 @@ Rails.application.routes.draw do
       resources :users, only: :show
       resources :languages, only: %i[index show]
       resources :puzzles do
-        resources :solutions
+        resources :solutions do
+          resources :likes, only: %i[create destroy]
+        end
       end
       resources :relationships, only: %i[create destroy]
     end

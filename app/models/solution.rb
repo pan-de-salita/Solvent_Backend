@@ -11,7 +11,8 @@
 #  updated_at  :datetime         not null
 #
 class Solution < ApplicationRecord
-  has_many :solution_likes, dependent: :destroy
+  has_many :likes, dependent: :destroy
+  has_many :likers, through: :likes, source: :user
 
   # TODO:
   # has_many :likes, through: :solution_likes, source: :user

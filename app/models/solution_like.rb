@@ -8,7 +8,10 @@
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
-class SolutionLike < ApplicationRecord
+class Like < ApplicationRecord
   belongs_to :user
   belongs_to :solution
+
+  validates :user_id, presence: true
+  validates :solution_id, presence: true
 end

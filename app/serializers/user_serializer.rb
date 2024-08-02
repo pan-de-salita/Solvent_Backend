@@ -12,11 +12,10 @@
 #  updated_at             :datetime         not null
 #  jti                    :string           not null
 #  username               :string           not null
-#  preferred_languages    :integer          default([]), is an Array
 #
 class UserSerializer
   include JSONAPI::Serializer
-  attributes :id, :username, :email, :preferred_languages, :created_at, :updated_at, :following, :followers,
+  attributes :id, :username, :email, :created_at, :updated_at, :following, :followers,
              :solved_puzzles, :completed_solutions, :languages, :created_puzzles, :stats
 
   attribute :following do |user|

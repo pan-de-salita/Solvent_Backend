@@ -21,6 +21,7 @@ Judge0::Client.languages[:data]
   Language.create!(id: language['id'], name: language_name, version: language_version)
 end
 
+User.destroy_by(username: 'miggy_belly')
 User.create(
   username: 'miggy_belly',
   email: 'miguel@churu.com',

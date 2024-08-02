@@ -12,7 +12,6 @@
 #  updated_at             :datetime         not null
 #  jti                    :string           not null
 #  username               :string           not null
-#  preferred_languages    :integer          default([]), is an Array
 #
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher

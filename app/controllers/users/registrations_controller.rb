@@ -40,7 +40,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def permitted_sign_up_param_keys
-    %i[username email password password_confirmation preferred_languages]
+    %i[username email password password_confirmation]
   end
 
   def configure_sign_up_params

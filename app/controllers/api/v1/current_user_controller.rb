@@ -10,7 +10,7 @@ module Api
         user = User.includes(:following, :followers, :languages, :puzzles, :solutions).find(current_user.id)
 
         render json: {
-          status: { code: 200, message: "Got user #{user.username} successfully." },
+          status: { code: 200, message: "Got current user #{user.username} successfully." },
           data: { current_user: UserSerializer.new(user)
                                               .serializable_hash[:data][:attributes] }
         }, status: :ok

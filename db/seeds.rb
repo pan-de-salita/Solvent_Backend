@@ -23,6 +23,8 @@ Judge0::Client.languages[:data]
   Language.create!(id: language['id'], name: language_name, version: language_version)
 end
 
+User.destroy_all
+
 User.create(
   username: 'miggy_belly',
   email: 'miguel@churu.com',
@@ -30,6 +32,8 @@ User.create(
   password_confirmation: 'foobar',
   jti: SecureRandom.uuid
 )
+
+Puzzle.destroy_all
 
 Puzzle.create(
   title: 'Multiples of 3 or 5',

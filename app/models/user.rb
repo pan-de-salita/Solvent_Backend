@@ -42,7 +42,6 @@ class User < ApplicationRecord
   validates :username, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: true
   validates :password_confirmation, presence: true, on: :create
-  validate :preferred_languages_must_be_an_array_of_language_ids
 
   scope :by_solved_puzzles, lambda {
                               select('users.*, COUNT(DISTINCT puzzles.id) AS solved_puzzles_count')
@@ -79,13 +78,6 @@ class User < ApplicationRecord
   end
 
   private
-
-  def preferred_languages_must_be_an_array_of_language_ids
-    if preferred_languages.present? &&
-       preferred_languages.any? { |preferred_language| Language.where(id: preferred_language).empty? }
-      errors.add(:preferred_languages, 'must be an array of language_ids')
-    end
-  end
 
   def language_solution_tally
     solutions.map(&:language_id).tally

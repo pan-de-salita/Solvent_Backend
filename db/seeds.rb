@@ -21,15 +21,13 @@ Judge0::Client.languages[:data]
   Language.create!(id: language['id'], name: language_name, version: language_version)
 end
 
-if User.where(username: 'miggy_belly').empty?
-  User.create(
-    username: 'miggy_belly',
-    email: 'miguel@churu.com',
-    password: 'foobar',
-    password_confirmation: 'foobar',
-    jti: SecureRandom.uuid
-  )
-end
+User.create(
+  username: 'miggy_belly',
+  email: 'miguel@churu.com',
+  password: 'foobar',
+  password_confirmation: 'foobar',
+  jti: SecureRandom.uuid
+)
 
 if Puzzle.where(title: 'Multiples of 3 or 5').empty?
   Puzzle.create(

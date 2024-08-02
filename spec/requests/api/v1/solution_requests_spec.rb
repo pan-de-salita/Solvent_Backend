@@ -30,10 +30,11 @@ RSpec.describe 'Solutions Requests', type: :request do
   context 'authorized user' do
     describe 'GET /api/v1/puzzles/:puzzle_id/solutions' do
       it 'returns all solutions to the specified puzzle' do
-        create(:solution, user: puzzle_solver, puzzle:, language:)
+        another_solution = create(:solution, user: puzzle_solver, puzzle:, language:)
         get "/api/v1/puzzles/#{puzzle.id}/solutions", headers: auth_headers
         expect(response).to have_http_status(:success)
-        expect(JSON.parse(response.body)['data']['all_solutions'].map { |s| s['user_id'] }).to include(puzzle_solver.id)
+        expect(JSON.parse(response.body)['data']['all_solutions'].map { |s| s['id'] }).to include(solution.id)
+        expect(JSON.parse(response.body)['data']['all_solutions'].map { |s| s['id'] }).to include(another_solution.id)
       end
     end
 

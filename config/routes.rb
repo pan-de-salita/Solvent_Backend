@@ -22,6 +22,7 @@ Rails.application.routes.draw do
       get '/current_user/completed_solutions', to: 'current_user#completed_solutions'
       get '/current_user/solved_puzzles', to: 'current_user#solved_puzzles'
       get '/current_user/created_puzzles', to: 'current_user#created_puzzles'
+      get '/puzzles/random', to: 'puzzles#random'
       resources :users, only: :show
       resources :languages, only: %i[index show]
       resources :puzzles do

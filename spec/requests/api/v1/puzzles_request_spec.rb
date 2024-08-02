@@ -49,6 +49,18 @@ RSpec.describe 'Puzzles Requests', type: :request do
       end
     end
 
+    describe 'GET /api/v1/puzzles/random' do
+      it 'returns a random puzzle' do
+        get '/api/v1/puzzles/random', headers: auth_headers
+        response_data = JSON.parse(response.body)['data']
+
+        expect(response).to have_http_status(:success)
+        expect(response_data['puzzle']).to be_a(Hash)
+        expect(Puzzle.all.map(&:id)).to include(response_data['puzzle']['id'])
+        expect(response_data['puzzle']['solutions_by_languages']).to be_a(Hash)
+      end
+    end
+
     describe 'POST /api/v1/puzzles' do
       it 'creates a new puzzle' do
         expect do

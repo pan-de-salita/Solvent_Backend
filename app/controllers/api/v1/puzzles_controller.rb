@@ -3,7 +3,7 @@
 module Api
   module V1
     class PuzzlesController < ApplicationController
-      before_action :set_puzzle, except: %i[index create show]
+      before_action :set_puzzle, except: %i[index create show random]
       before_action :authenticate_user!, except: %i[index show]
 
       # GET api/v1/puzzles
@@ -72,7 +72,6 @@ module Api
               message: "Puzzle with id #{params[:id]} couldn't be found."
             }
           }, status: :not_found
-
         end
       end
 
@@ -114,6 +113,18 @@ module Api
             }
           }, status: :unprocessable_entity
         end
+      end
+
+      # GET api/v1/puzzles/random
+      def random
+        random_puzzle_idx = Puzzle.all.map(&:id).sample
+        puzzle = Puzzle.find(random_puzzle_idx)
+
+        render json: {
+          status: { code: 200, message: "Got random puzzle '#{puzzle.title}' successfully." },
+          data: { puzzle: PuzzleSerializer.new(puzzle)
+                                          .serializable_hash[:data][:attributes] }
+        }, status: :ok
       end
 
       private

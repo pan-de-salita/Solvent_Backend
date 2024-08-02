@@ -3,7 +3,19 @@
 module Api
   module V1
     class UsersController < ApplicationController
-      before_action :set_user
+      before_action :set_user, only: :show
+
+      # GET api/v1/users
+      def index
+        users = User.includes(:following, :followers, :languages, :puzzles, :solutions).all
+
+        render json: {
+          status: { code: 200, message: 'Got all users successfully.' },
+          data: { all_users: OtherUserSerializer.new(users)
+                                                .serializable_hash[:data]
+                                                .map { |data| data[:attributes] } }
+        }, status: :ok
+      end
 
       # GET api/v1/users/:id
       def show

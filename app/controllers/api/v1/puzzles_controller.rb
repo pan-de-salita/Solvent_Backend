@@ -118,7 +118,7 @@ module Api
       # GET api/v1/puzzles/random
       def random
         random_puzzle_idx = Puzzle.all.map(&:id).sample
-        puzzle = Puzzle.find(random_puzzle_idx)
+        puzzle = Puzzle.find(random_puzzle_idx) if random_puzzle_idx
 
         render json: {
           status: { code: 200, message: "Got random puzzle '#{puzzle.title}' successfully." },

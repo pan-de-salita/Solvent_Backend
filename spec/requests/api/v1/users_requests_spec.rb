@@ -10,7 +10,6 @@ RSpec.describe 'Users Requests', type: :request do
       get('/api/v1/users', headers:)
       response_data = JSON.parse(response.body)['data']
 
-      p response_data
       expect(response).to have_http_status(:success)
       expect(response_data['all_users']).to be_kind_of(Array)
       expect(response_data['all_users'].map { |user| user['id'] }).to include(user.id)

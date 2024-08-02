@@ -10,7 +10,7 @@ module Api
 
       # GET api/v1/puzzles/:puzzle_id/solutions
       def index
-        solutions = @puzzle.solutions.where(user: current_user)
+        solutions = @puzzle.solutions.recent.where(user: current_user)
 
         render json: {
           status: { code: 200, message: "Got all solutions to puzzle '#{@puzzle.title}' successfully." },

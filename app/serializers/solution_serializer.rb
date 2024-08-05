@@ -12,7 +12,7 @@
 #
 class SolutionSerializer
   include JSONAPI::Serializer
-  attributes :id, :source_code, :user_id, :language, :puzzle, :likers
+  attributes :id, :source_code, :user_id, :language, :puzzle, :likers, :created_at, :updated_at
 
   attribute :likers do |solution|
     solution.likers.map(&:username)

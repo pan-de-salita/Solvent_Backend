@@ -19,7 +19,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   private
 
   def respond_with(resource, _opts = {})
-    if request.method == 'POST' # && resource.persisted?
+    if request.method == 'POST' && resource.persisted?
       render json: {
         status: { code: 201, message: 'Signed up sucessfully.' },
         data: UserSerializer.new(resource).serializable_hash[:data][:attributes]

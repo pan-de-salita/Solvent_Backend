@@ -15,7 +15,7 @@
 #
 class UserSerializer
   include JSONAPI::Serializer
-  attributes :id, :username, :email, :created_at, :updated_at, :following, :followers,
+  attributes :id, :username, :email, :created_at, :updated_at, :following, :followers, :solutions,
              :solved_puzzles, :completed_solutions, :languages, :created_puzzles, :stats
 
   attribute :following do |user|
@@ -30,8 +30,8 @@ class UserSerializer
   attribute :created_puzzles do |user|
     user.puzzles
   end
-  attribute :completed_solutions do |user|
-    user.completed_solutions
+  attribute :solutions_by_puzzle do |user|
+    user.solutions_by_puzzle
   end
   attribute :solved_puzzles do |user|
     user.solutions.map(&:puzzle).uniq

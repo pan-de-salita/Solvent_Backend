@@ -72,8 +72,8 @@ class User < ApplicationRecord
     Language.find(most_used_language_id)
   end
 
-  def completed_solutions
-    solutions.group_by { |solution| solution.puzzle.title }
+  def solutions_by_puzzle
+    solutions.group_by { |solution| solution.puzzle }
   end
 
   private

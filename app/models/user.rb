@@ -76,6 +76,10 @@ class User < ApplicationRecord
     solutions.group_by { |solution| solution.puzzle }
   end
 
+  def solutions_by_language
+    solutions.includes(:language).map { |solution| solution.language.name }.tally
+  end
+
   private
 
   def language_solution_tally

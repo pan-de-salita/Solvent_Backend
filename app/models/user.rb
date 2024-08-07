@@ -68,7 +68,7 @@ class User < ApplicationRecord
   def most_used_language
     return unless language_solution_tally.present?
 
-    most_used_language_id = language_solution_tally.max[0]
+    most_used_language_id = language_solution_tally.max
     Language.find(most_used_language_id)
   end
 

@@ -73,7 +73,7 @@ class User < ApplicationRecord
   end
 
   def solutions_by_puzzle
-    solutions.group_by { |solution| solution.puzzle }
+    solutions.group_by { |solution| solution.puzzle_id }
   end
 
   def solutions_by_language

@@ -44,7 +44,7 @@ class User < ApplicationRecord
 
   scope :by_solved_puzzles, lambda {
                               select('users.*, COUNT(DISTINCT puzzles.id) AS solved_puzzles_count')
-                                .left_joins(:solutions, :puzzles)
+                                .left_joins(:solutions, :solved_puzzles)
                                 .group('users.id')
                                 .order('solved_puzzles_count DESC')
                             }

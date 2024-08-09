@@ -28,7 +28,7 @@ class UserSerializer
   end
   attribute :followers do |user|
     user.followers.map do |u|
-      { if: u.id, username: u.username, most_used_language: u.most_used_language.name }
+      { id: u.id, username: u.username, most_used_language: u.most_used_language.name }
     end
   end
   attribute :languages do |user|

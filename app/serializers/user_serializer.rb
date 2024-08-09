@@ -16,7 +16,7 @@
 class UserSerializer
   include JSONAPI::Serializer
   attributes :id, :username, :email, :created_at, :updated_at, :following, :followers, :solutions,
-             :solved_puzzles, :solutions_by_puzzle, :solutions_by_language, :languages, :created_puzzles, :stats
+             :solved_puzzles, :solutions_by_puzzle, :solutions_by_language, :languages, :created_puzzles, :stats, :active_relationships
 
   attribute :following do |user|
     user.following.map do |u|

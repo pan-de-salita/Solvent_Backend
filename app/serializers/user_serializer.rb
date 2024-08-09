@@ -21,7 +21,7 @@ class UserSerializer
   attribute :following do |user|
     user.following.map do |u|
       most_used_language_data = u.most_used_language
-      most_used_language = most_used_language_data ? most_used_language_data.name : ''
+      most_used_language = most_used_language_data ? most_used_language_data.name : nil
 
       { id: u.id, username: u.username, most_used_language: }
     end

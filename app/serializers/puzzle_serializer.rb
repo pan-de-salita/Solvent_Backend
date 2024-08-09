@@ -15,7 +15,7 @@ class PuzzleSerializer
   include JSONAPI::Serializer
 
   attributes :id, :title, :description, :expected_output, :creator, :tags, :created_at, :updated_at,
-             :solutions_by_languages, :stats
+             :solutions_by_languages, :solvers, :stats
 
   attribute :creator do |puzzle|
     creator = puzzle.creator

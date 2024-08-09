@@ -35,4 +35,9 @@ class PuzzleSerializer
       languages: puzzle.languages_tally
     }
   end
+  attribute :solvers do |puzzle|
+    puzzle.solvers.map do |solver|
+      { id: solver.id, username: solver.username, email: solver.email }
+    end
+  end
 end

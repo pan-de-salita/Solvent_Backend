@@ -19,10 +19,14 @@ class UserSerializer
              :solved_puzzles, :solutions_by_puzzle, :solutions_by_language, :languages, :created_puzzles, :stats
 
   attribute :following do |user|
-    user.following.map(&:id)
+    user.following.map do |u|
+      { id: u.id, following: u.username }
+    end
   end
   attribute :followers do |user|
-    user.followers.map(&:id)
+    user.followers.map do |u|
+      { if: u.id, follwer: u.username }
+    end
   end
   attribute :languages do |user|
     user.languages.uniq

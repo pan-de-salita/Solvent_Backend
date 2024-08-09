@@ -1,19 +1,32 @@
 class OtherUserSerializer
   include JSONAPI::Serializer
-  attributes :id, :username, :email, :created_at, :updated_at, :following_count, :followers_count,
-             :solved_puzzles, :languages, :created_puzzles, :stats
+  attributes :id, :username, :email, :created_at, :updated_at, :following, :followers, :solutions,
+             :solved_puzzles, :solutions_by_puzzle, :solutions_by_language, :languages, :created_puzzles, :stats, :active_relationships
 
-  attribute :following_count do |user|
-    user.following.count
+  attribute :following do |user|
+    user.following.map do |u|
+      most_used_language_data = u.most_used_language
+      most_used_language = most_used_language_data ? most_used_language_data.name : nil
+
+      { id: u.id, username: u.username, most_used_language: }
+    end
   end
-  attribute :followers_count do |user|
-    user.followers.count
+  attribute :followers do |user|
+    user.followers.map do |u|
+      { id: u.id, username: u.username, most_used_language: u.most_used_language.name }
+    end
   end
   attribute :languages do |user|
     user.languages.uniq
   end
   attribute :created_puzzles do |user|
     user.puzzles
+  end
+  attribute :solutions_by_puzzle do |user|
+    user.solutions_by_puzzle
+  end
+  attribute :solutions_by_language do |user|
+    user.solutions_by_language
   end
   attribute :solved_puzzles do |user|
     user.solutions.map(&:puzzle).uniq

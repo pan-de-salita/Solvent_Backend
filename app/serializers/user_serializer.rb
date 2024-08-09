@@ -20,12 +20,12 @@ class UserSerializer
 
   attribute :following do |user|
     user.following.map do |u|
-      { id: u.id, following: u.username }
+      { id: u.id, username: u.username }
     end
   end
   attribute :followers do |user|
     user.followers.map do |u|
-      { if: u.id, follwer: u.username }
+      { if: u.id, username: u.username }
     end
   end
   attribute :languages do |user|

@@ -22,7 +22,7 @@ module Api
           render json: {
             status: {
               code: 422,
-              message: "Relationship couldn't be created successfully. #{relationship.errors.full_messages.to_sentence}."
+              message: "Relationship couldn't be created successfully."
             }
           }, status: :unprocessable_entity
         end
